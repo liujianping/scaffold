@@ -21,7 +21,7 @@ func App() *cli.App {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "template, t",
-			Value: "./template",
+			Value: "",
 			Usage: "template directory",
 		},
 		cli.BoolFlag{

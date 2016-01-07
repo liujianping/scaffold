@@ -29,14 +29,10 @@ scaffold
 
 ### 安装
 
-本项目依赖 goimports 工具, 请提前安装好该工具.
+本工具会执行 goimports 工具格式化生成的文件, 请提前安装好该工具.
 
 ````
 $: go get github.com/liujianping/scaffold
-
-$: cd $GOPATH/src/github.com/liujianping/scaffold
-
-$: go build
 
 ````
 
@@ -121,8 +117,17 @@ CREATE TABLE `accounts` (
 //! 初始化 
 $: ./scaffold -f revel init [project/path]  
 
-//! 生成模块代码
-$: ./scaffold -f revel module  [project/path]  [table_name]
+//! 生成模块代码 [mvc]
+$: ./scaffold -f revel module  [project/path]  [table_name1] [table_name2] ...
+
+//! 生成模型代码 [m]
+$: ./scaffold -f revel model  [project/path]  [table_name1] [table_name2] ...
+
+//! 生成视图代码 [v]
+$: ./scaffold -f revel view  [project/path]  [table_name1] [table_name2] ...
+
+//! 生成控制器代码 [c]
+$: ./scaffold -f revel controller  [project/path]  [table_name1] [table_name2] ...
 
 //! 建立索引路由
 $: ./scaffold -f revel index [project/path] 

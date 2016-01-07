@@ -41,6 +41,10 @@ func Join(statments []*Statment, sep string) *Statment {
 	}
 }
 
+type SQL interface {
+	Statment() *Statment
+}
+
 type QuerySQL struct {
 	table      string
 	primary    string
@@ -141,7 +145,7 @@ func (sql *QuerySQL) CountStatment() *Statment {
 	}
 }
 
-func (sql *QuerySQL) QueryStatment() *Statment {
+func (sql *QuerySQL) Statment() *Statment {
 	fmts := []string{}
 	vals := []interface{}{}
 

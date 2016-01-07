@@ -61,7 +61,7 @@ func (obj [[.ClassName]]) Execute(m *Model,
 		return
 	}
 
-	statment := SQL.QueryStatment()
+	statment := SQL.Statment()
 	_, err = m.Select(&results, statment.SQLFormat(), statment.SQLParams()...)
 	return
 }

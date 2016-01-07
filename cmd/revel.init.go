@@ -1,24 +1,17 @@
 package cmd
 
 import (
-	"errors"
-	"go/build"
 	"path"
-	"path/filepath"
 
 	"github.com/liujianping/scaffold/symbol"
 )
 
 func revel_init(project string, template_dir string, force bool) error {
-
-	gopath := build.Default.GOPATH
-	if gopath == "" {
-		return errors.New("Abort: GOPATH environment variable is not set. ")
+	root_dir, err := gopath_src_dir()
+	if err != nil {
+		return err
 	}
-
-	// set go src path
-	srcRoot := filepath.Join(filepath.SplitList(gopath)[0], "src")
-	project_dir := path.Join(srcRoot, project)
+	project_dir := path.Join(root_dir, project)
 
 	data := map[string]interface{}{
 		"project": project,
