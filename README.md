@@ -7,15 +7,25 @@ scaffold
 
 ** 通过数据表定义, 一键生成管理平台 ** 
 
-[index](doc/scaffold_index.png)
+[索引页]
 
-[list](doc/user_account_index.png)
+![index](doc/scaffold_index.png)
 
-[add](doc/user_account_add.png)
+[列表页]
 
-[update](doc/user_account_update.png)
+![list](doc/user_account_index.png)
 
-[detail](doc/user_account_detail.png)
+[新增页]
+
+![add](doc/user_account_add.png)
+
+[更新页]
+
+![update](doc/user_account_update.png)
+
+[详情页]
+
+![detail](doc/user_account_detail.png)
 
 ### 安装
 
