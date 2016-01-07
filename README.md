@@ -5,7 +5,7 @@ scaffold
 
 ### 特点
 
-** 通过数据表定义, 一键生成管理平台 ** 
+**通过数据表定义, 一键生成管理平台** 
 
 [索引页]
 
@@ -140,3 +140,8 @@ $: ./scaffold -f revel index [project/path]
 $: revel run [project/path]
 
 ````
+
+#### TODO
+
+* 通用 HTML 控件生成
+* 其它框架支持(beego等)

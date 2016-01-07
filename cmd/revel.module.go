@@ -127,7 +127,7 @@ func revel_model(project string, template_dir string, moduels []string, force bo
 				"table":   table,
 			}
 
-			if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "models", "model.crud.go"),
+			if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "models", "model.crud.go.t"),
 				path.Join(project_dir, "app", "models", fmt.Sprintf("model.%s.go", symbol.ModuleName(table.Name()))),
 				data, force); err != nil {
 				return err
@@ -174,7 +174,7 @@ func revel_controller(project string, template_dir string, modules []string, for
 				"table":   table,
 			}
 
-			if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "controllers", "controller.crud.go"),
+			if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "controllers", "controller.crud.go.t"),
 				path.Join(project_dir, "app", "controllers", fmt.Sprintf("controller.%s.go", symbol.ModuleName(table.Name()))),
 				data, force); err != nil {
 				return err
