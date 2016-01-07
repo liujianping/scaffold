@@ -9,23 +9,23 @@ scaffold
 
 [索引页]
 
-![index](doc/scaffold_index.png)
+![index](http://7xjh31.com1.z0.glb.clouddn.com/scaffold_index.png)
 
 [列表页]
 
-![list](doc/user_account_index.png)
+![list](http://7xjh31.com1.z0.glb.clouddn.com/user_account_index.png)
 
 [新增页]
 
-![add](doc/user_account_add.png)
+![add](http://7xjh31.com1.z0.glb.clouddn.com/user_account_add.png)
 
 [更新页]
 
-![update](doc/user_account_update.png)
+![update](http://7xjh31.com1.z0.glb.clouddn.com/user_account_update.png)
 
 [详情页]
 
-![detail](doc/user_account_detail.png)
+![detail](http://7xjh31.com1.z0.glb.clouddn.com/user_account_detail.png)
 
 ### 安装
 
