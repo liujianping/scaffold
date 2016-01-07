@@ -1,0 +1,15 @@
+{{set . "title" "index"}}
+{{template "header" .}}
+<div class="container-fluid">
+    <ol class="breadcrumb">
+        <li class="active">home</li>
+    </ol>
+    <div class="list-group">
+      <a href="#" class="list-group-item disabled">
+      index
+      </a>
+      [[range .tables]][[if eq (.Tag "index") "y"]]<a href="/[[.Name | module]].index" class="list-group-item">[[.Tag "caption"]]</a>
+      [[end]][[end]]
+    </div>
+</div>
+{{template "footer" .}}

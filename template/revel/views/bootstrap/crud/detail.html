@@ -1,0 +1,30 @@
+[[set . "ModuleName" (.table.Name | module)]]
+
+{{set . "title" "[[.ModuleName]].detail"}}
+{{template "header" .}}
+
+<div class="container-fluid">
+  <ol class="breadcrumb">
+    <li><a href="/">home</a></li>
+    <li><a href="/[[.ModuleName]].index">[[.ModuleName]]</a></li>
+    <li class="active">[[.ModuleName]].detail</li>
+  </ol>
+  <div class="panel panel-default">
+    <div class="panel-body" id="board">
+
+    <fieldset>
+        <legend class="">[[.ModuleName]].detail</legend>
+    </fieldset>
+    {{with .obj}}
+    <dl class="dl-horizontal">
+      [[range .table.Columns]]
+      <dt>[[.Tag "caption"]]</dt>
+      <dd>{{.[[.Field | camel | lint]]}}</dd>
+      [[end]]
+    </dl>
+    {{end}}
+    </div>
+  </div>
+</div>
+
+{{template "footer" .}}

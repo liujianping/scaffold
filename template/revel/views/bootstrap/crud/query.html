@@ -1,0 +1,58 @@
+[[set . "ModuleName" (.table.Name | module)]]
+
+<!-- 提示信息开始 -->
+{{if .flash.success}}
+<div class="alert alert-success">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+  <span aria-hidden="true">&times;</span>
+  </button>
+  <strong>Success! </strong>{{.flash.success}}
+</div>
+{{end}}
+
+{{if .flash.error}}
+<div class="alert alert-warning">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+  <span aria-hidden="true">&times;</span>
+  </button>
+  <strong>Warning! </strong>{{.flash.error}}
+</div>
+{{end}}
+<!-- 提示信息结束 -->
+
+<!-- 表格列表 开始 -->
+<div class="panel panel-default">
+  <div class="panel-body">
+
+  {{if not .items}}
+  <p>暂无有效用户账户。</p>
+  {{else}}
+  <table class="table table-hover">
+      <thead>
+        [[range .table.Columns]][[if eq (.Tag "index") "y"]]<th>[[.Tag "caption"]]</th>
+        [[end]][[end]]
+        <th>操作</th>
+      </thead>
+      <tbody>
+          {{range .items}}
+          <tr>
+            [[range .table.Columns]][[if eq (.Tag "index") "y"]]<td>{{.[[.Field | camel | lint]]}}</td>
+            [[end]][[end]]
+            <td>
+              <a href="/[[.ModuleName]].detail/{{.ID}}">详情</a>
+              <a href="/[[.ModuleName]].update/{{.ID}}">修改</a>
+              <a href="/[[.ModuleName]].remove/{{.ID}}">删除</a>
+            </td>
+          </tr>
+          {{end}}
+      </tbody>
+      <tfoot>
+          <tr>
+              <td colspan="10">一共有<strong>{{.total}}</strong>记录。</td>
+          </tr>
+      </tfoot>
+  </table>
+  {{.pagination}}
+  {{end}}
+  </div>
+</div>

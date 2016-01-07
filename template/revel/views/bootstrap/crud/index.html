@@ -1,0 +1,69 @@
+[[set . "ModuleName" (.table.Name | module)]]
+
+{{set . "title" "[[.ModuleName]].index"}}
+{{template "header" .}}
+
+<script type="text/javascript" charset="utf-8">
+  function search(page_no, page_size) {
+    $("#page_no").val(page_no)
+    $("#page_size").val(page_size)
+    frm = $("form#query").serialize()
+    console.log(frm)
+    $.post("/[[.ModuleName]].query", frm, function(html){
+      $('#board').empty()
+      $('#board').append(html) 
+    })
+  }
+
+  function create() {
+    window.location.assign("/[[.ModuleName]].create")
+  }
+
+ </script>
+
+<div class="container-fluid">
+  <ol class="breadcrumb">
+    <li><a href="/">home</a></li>
+    <li class="active">[[.ModuleName]]</li>
+  </ol>
+  <!-- 查询条件开始 -->
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <form class="form-inline" id="query">
+        <div class="form-group">
+          <!-- query -->
+          [[range .table.Columns]]    
+            [[if ne (.Tag "query") ""]]
+            {{with $field := field "query.[[.Field | camel | lint]]" .}}
+              <label>[[.Tag "caption"]]</label>
+              <input type="text" class="form-control" name="{{$field.Name}}" value="{{$field.Value}}">
+            {{end}}
+            [[end]]
+          [[end]]
+          <!-- sort -->
+          {{with $field := field "sort.Value" .}}
+          <label>排序</label>
+          <select class="form-control" name="{{$field.Name}}" value="{{$field.Flash}}">
+            <option value="0">默认排序</option>
+            <option value="1">按时间降序</option>
+            <option value="2">按时间升序</option>
+          </select>
+          {{end}}
+          <!-- page -->
+          <input type="hidden" id="page_no" name="page.No"/>
+          <input type="hidden" id="page_size" name="page.Size"/>
+          <!-- button -->
+          <button type="button" class="btn btn-primary" onclick="search();">查询</button>
+          <button type="button" class="btn btn-success" onclick="create();">新增</button>
+        </div> 
+      </form>
+    </div>
+  </div>
+  <!-- 查询条件结束 -->
+
+  <div id="board">
+  {{template "[[.ModuleName]]/query.html" .}}  
+  </div>
+</div>
+
+{{template "footer" .}}
