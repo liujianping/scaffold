@@ -115,22 +115,22 @@ CREATE TABLE `accounts` (
 
 ````
 //! 初始化 
-$: ./scaffold -f revel init [project/path]  
+$: scaffold -f revel init [project/path]  
 
 //! 生成模块代码 [mvc]
-$: ./scaffold -f revel module  [project/path]  [table_name1] [table_name2] ...
+$: scaffold -f revel module  [project/path]  [table_name1] [table_name2] ...
 
 //! 生成模型代码 [m]
-$: ./scaffold -f revel model  [project/path]  [table_name1] [table_name2] ...
+$: scaffold -f revel model  [project/path]  [table_name1] [table_name2] ...
 
 //! 生成视图代码 [v]
-$: ./scaffold -f revel view  [project/path]  [table_name1] [table_name2] ...
+$: scaffold -f revel view  [project/path]  [table_name1] [table_name2] ...
 
 //! 生成控制器代码 [c]
-$: ./scaffold -f revel controller  [project/path]  [table_name1] [table_name2] ...
+$: scaffold -f revel controller  [project/path]  [table_name1] [table_name2] ...
 
 //! 建立索引路由
-$: ./scaffold -f revel index [project/path] 
+$: scaffold -f revel index [project/path] 
 
 ````
 
