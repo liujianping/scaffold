@@ -3,7 +3,19 @@ scaffold
 
 脚手架工具, 主要用途通过定义数据表, 一键生成以下管理平台的工具。
 
+### 特点
 
+** 通过数据表定义, 一键生成管理平台 ** 
+
+[index](doc/scaffold_index.png)
+
+[list](doc/user_account_index.png)
+
+[add](doc/user_account_add.png)
+
+[update](doc/user_account_update.png)
+
+[detail](doc/user_account_detail.png)
 
 ### 安装
 
