@@ -6,14 +6,14 @@ import (
 
 const version = "0.0.1"
 const author = ""
-const support = "liujianping.itech@qq.com"
+const support = "liujianping@h2object.io"
 
 func App() *cli.App {
 	app := cli.NewApp()
 
 	//! app settings
 	app.Name = "scaffold"
-	app.Usage = "scaffold database adminstrator portal tool"
+	app.Usage = "scaffold, generate revel project by database schema"
 	app.Version = version
 	app.Author = author
 	app.Email = support

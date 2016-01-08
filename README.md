@@ -1,7 +1,9 @@
 scaffold
 ===
 
-脚手架工具, 主要用途通过定义数据表, 一键生成以下管理平台的工具。
+scaffold, generate revel project by database schema
+
+脚手架工具, 通过定义数据表,一键生成Revel管理平台项目。
 
 ### 特点
 
