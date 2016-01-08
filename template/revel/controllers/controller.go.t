@@ -44,7 +44,7 @@ func InitModel() {
 	port := revel.Config.IntDefault("db.port", 3306)
 	user := revel.Config.StringDefault("db.username", "")
 	pass := revel.Config.StringDefault("db.password", "")
-	name := revel.Config.StringDefault("db.datebase", "")
+	name := revel.Config.StringDefault("db.database", "")
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local&strict=true&sql_notes=false",
 		user, pass, host, port, name)
 
