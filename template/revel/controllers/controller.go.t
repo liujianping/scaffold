@@ -42,9 +42,9 @@ func InitModel() {
 	driver := revel.Config.StringDefault("db.driver", "mysql")
 	host := revel.Config.StringDefault("db.host", "127.0.0.1")
 	port := revel.Config.IntDefault("db.port", 3306)
-	user := revel.Config.StringDefault("db.username", "mym_dev_user")
-	pass := revel.Config.StringDefault("db.password", "mym_dev_pass")
-	name := revel.Config.StringDefault("db.datebase", "mym_dev")
+	user := revel.Config.StringDefault("db.username", "")
+	pass := revel.Config.StringDefault("db.password", "")
+	name := revel.Config.StringDefault("db.datebase", "")
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local&strict=true&sql_notes=false",
 		user, pass, host, port, name)
 
