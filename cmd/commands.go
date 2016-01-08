@@ -6,7 +6,7 @@ import (
 
 const version = "0.0.1"
 const author = ""
-const support = "liujianping@h2object.io"
+const support = "liujianping.itech@qq.com"
 
 func App() *cli.App {
 	app := cli.NewApp()
