@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"time"
 
+	bsql "github.com/liujianping/bsql"
 	revel "github.com/revel/revel"
 )
 
@@ -41,14 +42,16 @@ func (obj [[.ClassName]]) Columns() []string {
 	return columns
 }
 
-func (obj [[.ClassName]]) Execute(m *Model,
+func (obj [[.ClassName]]) Search(m *Model,
 	query [[.ClassName]]Query,
 	sort [[.ClassName]]SortBy,
 	page [[.ClassName]]Page) (total int64, results [][[.ClassName]], err error) {
 
-	SQL := NewQuerySQL(obj.TableName())
-	SQL.PrimaryKey(obj.PrimaryKey())
-	SQL.Columns(obj.Columns()...)
+	t := bsql.TABLE(obj.TableName())
+	t.PrimaryKey(obj.PrimaryKey())
+	t.Columns(obj.Columns()...)
+
+	SQL := bsql.NewQuerySQL(t)
 
 	query.SQL(SQL)
 	sort.SQL(SQL)
@@ -80,7 +83,7 @@ type [[.ClassName]]Query struct {
     [[end]]
 }
 
-func (obj [[.ClassName]]Query) SQL(sql *QuerySQL) {
+func (obj [[.ClassName]]Query) SQL(query *bsql.QuerySQL) {
 	t := reflect.TypeOf(obj)
 	v := reflect.ValueOf(obj)
 	for i := 0; i < t.NumField(); i++ {
@@ -88,7 +91,7 @@ func (obj [[.ClassName]]Query) SQL(sql *QuerySQL) {
 		tag := field.Tag
 		value := v.Field(i)
 		if ZeroValue(value) == false {
-			sql.Where(BinaryExpression(tag.Get("db"), tag.Get("query"), value.Interface()))
+			query.Where(bsql.BinaryExpression(tag.Get("db"), tag.Get("query"), value.Interface()))
 		}
 	}
 }
@@ -99,12 +102,13 @@ type [[.ClassName]]SortBy struct {
 	Value int
 }
 
-func (sortBy [[.ClassName]]SortBy) SQL(sql *QuerySQL) {
+func (sortBy [[.ClassName]]SortBy) SQL(query *bsql.QuerySQL) {	
+	t := query.Table(Default[[.ClassName]].TableName())
 	switch sortBy.Value {
 	case 1:
-		sql.OrderByDesc(Default[[.ClassName]].PrimaryKey())
+		query.OrderByDesc(t.Column(Default[[.ClassName]].PrimaryKey()))
 	case 2:
-		sql.OrderByAsc(Default[[.ClassName]].PrimaryKey())
+		query.OrderByAsc(t.Column(Default[[.ClassName]].PrimaryKey()))
 	}
 }
 
@@ -115,11 +119,11 @@ type [[.ClassName]]Page struct {
 	Size int
 }
 
-func (page [[.ClassName]]Page) SQL(sql *QuerySQL) {
+func (page [[.ClassName]]Page) SQL(query *bsql.QuerySQL) {
 	if page.Size == 0 {
 		page.Size = DefaultPageSize
 	}
-	sql.Limit(page.No, page.Size)
+	query.Limit(page.No, page.Size)
 }
 
 //! ===========================================================================

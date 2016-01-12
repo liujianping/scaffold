@@ -14,7 +14,7 @@ type [[.ClassName]]Controller struct {
 func (c [[.ClassName]]Controller) Index() revel.Result {
 	revel.TRACE.Printf("GET >> [[.ModuleName]].index ...")
 
-	total, items, err := models.Default[[.ClassName]].Execute(model,
+	total, items, err := models.Default[[.ClassName]].Search(model,
 		models.Default[[.ClassName]]Query,
 		models.Default[[.ClassName]]SortBy,
 		models.Default[[.ClassName]]Page)
@@ -40,7 +40,7 @@ func (c [[.ClassName]]Controller) Query(query models.[[.ClassName]]Query,
 	revel.TRACE.Printf("POST >> [[.ModuleName]].query ...(query: %v) (sort: %v) (page: %v)",
 		query, sort, page)
 
-	total, items, err := models.Default[[.ClassName]].Execute(model,
+	total, items, err := models.Default[[.ClassName]].Search(model,
 		query, sort, page)
 	if err != nil {
 		c.Flash.Error(err.Error())
