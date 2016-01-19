@@ -14,19 +14,19 @@ type [[.ClassName]]Controller struct {
 func (c [[.ClassName]]Controller) Index() revel.Result {
 	revel.TRACE.Printf("GET >> [[.ModuleName]].index ...")
 
-	total, items, err := models.Default[[.ClassName]].Search(model,
+	total, items, err := models.Default[[.ClassName]].Search(db,
 		models.Default[[.ClassName]]Query,
 		models.Default[[.ClassName]]SortBy,
 		models.Default[[.ClassName]]Page)
 	if err != nil {
 		c.Flash.Error(err.Error())
-		return c.RenderError(err)
+		return c.RenderTemplate("[[.ModuleName]]/index.html")
 	}
 
-	pagination := c.Pagination("search",
-		int(total),
-		models.Default[[.ClassName]]Page.No,
-		models.PageSize(models.Default[[.ClassName]]Page.Size))
+	pagination := Pagination("pagination", "[[.ModuleName]]", 
+		total,
+		models.Default[[.ClassName]]Page.Size,
+		models.Default[[.ClassName]]Page.No)
 
 	c.RenderArgs["total"] = total
 	c.RenderArgs["items"] = items
@@ -40,17 +40,14 @@ func (c [[.ClassName]]Controller) Query(query models.[[.ClassName]]Query,
 	revel.TRACE.Printf("POST >> [[.ModuleName]].query ...(query: %v) (sort: %v) (page: %v)",
 		query, sort, page)
 
-	total, items, err := models.Default[[.ClassName]].Search(model,
+	total, items, err := models.Default[[.ClassName]].Search(db,
 		query, sort, page)
 	if err != nil {
 		c.Flash.Error(err.Error())
 		return c.RenderTemplate("[[.ModuleName]]/query.html")
 	}
 
-	pagination := c.Pagination("search",
-		int(total),
-		page.No,
-		models.PageSize(page.Size))
+	pagination := Pagination("pagination", "[[.ModuleName]]", total, page.Size, page.No)
 
 	c.RenderArgs["total"] = total
 	c.RenderArgs["items"] = items
@@ -61,7 +58,7 @@ func (c [[.ClassName]]Controller) Query(query models.[[.ClassName]]Query,
 func (c [[.ClassName]]Controller) Detail(id int64) revel.Result {
 	revel.TRACE.Printf("GET >> [[.ModuleName]].detail ... (%d)", id)
 
-	obj, err := model.Get(models.[[.ClassName]]{}, id)
+	obj, err := db.Get(models.[[.ClassName]]{}, id)
 	if err != nil {
 		c.Flash.Error(err.Error())
 		return c.Redirect(routes.[[.ClassName]]Controller.Index())
@@ -101,7 +98,7 @@ func (c [[.ClassName]]Controller) CreatePost(obj models.[[.ClassName]]) revel.Re
 func (c [[.ClassName]]Controller) Update(id int64) revel.Result {
 	revel.TRACE.Printf("GET >> [[.ModuleName]].update ... (%d)", id)
 
-	obj, err := model.Get(models.[[.ClassName]]{}, id)
+	obj, err := db.Get(models.[[.ClassName]]{}, id)
 	if err != nil {
 		c.Flash.Error(err.Error())
 		return c.Redirect(routes.[[.ClassName]]Controller.Index())
@@ -155,4 +152,79 @@ func (c [[.ClassName]]Controller) Remove(id int64) revel.Result {
 	}
 
 	return c.Redirect(routes.[[.ClassName]]Controller.Index())
+}
+
+func (c [[.ClassName]]Controller) FinderIndex() revel.Result {
+	revel.TRACE.Printf("GET >> [[.ModuleName]].finder.index ...")
+
+	total, items, err := models.Default[[.ClassName]].Search(db,
+		models.Default[[.ClassName]]Query,
+		models.Default[[.ClassName]]SortBy,
+		models.Default[[.ClassName]]Page)
+	if err != nil {
+		c.Flash.Error(err.Error())
+		return c.RenderTemplate("[[.ModuleName]]/finder.index.html")
+	}
+
+	pagination := Pagination("finder.pagination", "[[.ModuleName]]", total,
+		models.Default[[.ClassName]]Page.Size,
+		models.Default[[.ClassName]]Page.No)
+
+	c.RenderArgs["total"] = total
+	c.RenderArgs["items"] = items
+	c.RenderArgs["pagination"] = pagination
+	return c.RenderTemplate("[[.ModuleName]]/finder.index.html")
+}
+
+func (c [[.ClassName]]Controller) FinderQuery(query models.[[.ClassName]]Query,
+	sort models.[[.ClassName]]SortBy,
+	page models.[[.ClassName]]Page) revel.Result {
+	revel.TRACE.Printf("POST >> [[.ModuleName]].finder.query ...(query: %v) (sort: %v) (page: %v)",
+		query, sort, page)
+
+	total, items, err := models.Default[[.ClassName]].Search(db,
+		query, sort, page)
+	if err != nil {
+		c.Flash.Error(err.Error())
+		return c.RenderTemplate("[[.ModuleName]]/finder.query.html")
+	}
+
+	pagination := Pagination("finder.pagination", "[[.ModuleName]]", total, page.Size, page.No)
+
+	c.RenderArgs["total"] = total
+	c.RenderArgs["items"] = items
+	c.RenderArgs["pagination"] = pagination
+	return c.RenderTemplate("[[.ModuleName]]/finder.query.html")
+}
+
+[[if eq .ClassName "Option"]]
+
+var selections = map[string]interface{}{}
+
+func SelectionWidget(code string) []models.[[.ClassName]] {
+	if items, ok := selections[code]; ok {
+		return items.([]models.[[.ClassName]])
+	}
+
+	query := models.[[.ClassName]]Query{Code: code}
+	sort := models.[[.ClassName]]SortBy{1}
+	page := models.[[.ClassName]]Page{0, 0}
+	_, items, _ := models.Default[[.ClassName]].Search(db,
+		query, sort, page)
+
+	selections[code] = items
+	return items
+}
+
+func init() {
+	revel.TemplateFuncs["selection"] = SelectionWidget
+}
+[[end]]
+
+func [[.ClassName]]Count() int64 {
+	return models.Default[[.ClassName]].Count(db)
+}
+
+func init() {
+	revel.TemplateFuncs["[[.ClassName]]Count"] = [[.ClassName]]Count
 }

@@ -1,0 +1,25 @@
+{{if gt (len .value.pages) 1}}
+<nav id="{{.name | domid}}-pagination" data-value="{{.value.page_size}}">
+  <ul class="pagination">
+  {{range .value.pages}}
+    {{if .Head}}
+    <li {{if .Selected}}class="active"{{end}}>
+      <a id="page" data-value="{{.No}}" href="javascript:search({{.No}}, {{.Size}})" aria-label="Previous">
+      <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    {{else if .Normal}}
+    <li {{if .Selected}}class="active"{{end}}>
+      <a id="page" data-value="{{.No}}" href="javascript:search({{.No}}, {{.Size}})">{{.No}}</a>
+    </li>
+    {{else if .Tail}}
+    <li {{if .Selected}}class="active"{{end}}>
+      <a id="page" data-value="{{.No}}" href="javascript:search({{.No}}, {{.Size}})" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+    {{end}}
+  {{end}}
+  </ul>
+</nav>
+{{end}}

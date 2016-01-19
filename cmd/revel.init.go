@@ -17,6 +17,11 @@ func revel_init(project string, template_dir string, force bool) error {
 		"project": project,
 	}
 
+	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "conf", "app.conf"),
+		path.Join(project_dir, "conf", "app.conf"), data, true); err != nil {
+		return err
+	}
+
 	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "models", "model.go.t"),
 		path.Join(project_dir, "app", "models", "model.go"), data, force); err != nil {
 		return err
@@ -27,13 +32,18 @@ func revel_init(project string, template_dir string, force bool) error {
 		return err
 	}
 
+	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "controllers", "controller.widget.go.t"),
+		path.Join(project_dir, "app", "controllers", "controller.widget.go"), data, force); err != nil {
+		return err
+	}
+
 	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "controllers", "controller.db.go.t"),
 		path.Join(project_dir, "app", "controllers", "controller.db.go"), data, force); err != nil {
 		return err
 	}
 
-	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "controllers", "controller.go.t"),
-		path.Join(project_dir, "app", "controllers", "controller.go"), data, force); err != nil {
+	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "controllers", "controller.fns.go.t"),
+		path.Join(project_dir, "app", "controllers", "controller.fns.go"), data, force); err != nil {
 		return err
 	}
 

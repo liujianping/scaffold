@@ -1,0 +1,10 @@
+{{if eq (index .options 0) "r"}}<img src="{{.value}}" width="240px" />{{end}}
+{{if eq (index .options 0) "w"}}
+<div id="{{.name | domid}}">
+    <input type="hidden" name="{{.name}}">
+    <input type="file"  onchange="upload(this);">
+    {{if and .value (ne .value "")}}
+    <img src="{{.value}}" width="240px" />
+    {{end}}
+</div>
+{{end}}

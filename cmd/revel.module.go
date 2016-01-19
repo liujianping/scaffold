@@ -3,7 +3,10 @@ package cmd
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"os"
 	"path"
+	"path/filepath"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/liujianping/scaffold/symbol"
@@ -19,9 +22,9 @@ func revel_db(project_dir string) (*sql.DB, error) {
 	driver := CONFIG.StringDefault("db.driver", "mysql")
 	host := CONFIG.StringDefault("db.host", "127.0.0.1")
 	port := CONFIG.IntDefault("db.port", 3306)
-	user := CONFIG.StringDefault("db.username", "mym_dev_user")
-	pass := CONFIG.StringDefault("db.password", "mym_dev_pass")
-	name := CONFIG.StringDefault("db.database", "mym_dev")
+	user := CONFIG.StringDefault("db.username", "")
+	pass := CONFIG.StringDefault("db.password", "")
+	name := CONFIG.StringDefault("db.database", "")
 
 	dsn := symbol.DSNFormat(host, port, user, pass, name)
 	return sql.Open(driver, dsn)
@@ -73,10 +76,26 @@ func revel_index(project string, template_dir string, theme string, force bool) 
 		data, true); err != nil {
 		return err
 	}
-	return nil
+
+	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "public", "js", "scaffold.js"),
+		path.Join(project_dir, "public", "js", "scaffold.js"),
+		data, true); err != nil {
+		return err
+	}
+
+	var scan = func(fn string, fileInfo os.FileInfo, inpErr error) (err error) {
+		if !fileInfo.IsDir() {
+			return symbol.RenderTemplate(fn,
+				path.Join(project_dir, "app", "views", "widget", fileInfo.Name()),
+				data, true)
+		}
+		return nil
+	}
+	return filepath.Walk(path.Join(template_dir, "revel", "views", theme, "widget"), scan)
 }
 
 func revel_module(project string, template_dir string, moduels []string, theme string, force bool) error {
+	log.Println("modules =>", moduels)
 	if err := revel_model(project, template_dir, moduels, force); err != nil {
 		return err
 	}
@@ -221,33 +240,15 @@ func revel_view(project string, template_dir string, modules []string, theme str
 				"table":   table,
 			}
 
-			if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "views", theme, "crud/create.html"),
-				path.Join(project_dir, "app", "views", symbol.ModuleName(table.Name()), "create.html"),
-				data, force); err != nil {
-				return err
+			var scan = func(fn string, fileInfo os.FileInfo, inpErr error) (err error) {
+				if !fileInfo.IsDir() {
+					return symbol.RenderTemplate(fn,
+						path.Join(project_dir, "app", "views", symbol.ModuleName(table.Name()), fileInfo.Name()),
+						data, force)
+				}
+				return nil
 			}
-
-			if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "views", theme, "crud/detail.html"),
-				path.Join(project_dir, "app", "views", symbol.ModuleName(table.Name()), "detail.html"),
-				data, force); err != nil {
-				return err
-			}
-
-			if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "views", theme, "crud/index.html"),
-				path.Join(project_dir, "app", "views", symbol.ModuleName(table.Name()), "index.html"),
-				data, force); err != nil {
-				return err
-			}
-
-			if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "views", theme, "crud/query.html"),
-				path.Join(project_dir, "app", "views", symbol.ModuleName(table.Name()), "query.html"),
-				data, force); err != nil {
-				return err
-			}
-
-			if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "views", theme, "crud/update.html"),
-				path.Join(project_dir, "app", "views", symbol.ModuleName(table.Name()), "update.html"),
-				data, force); err != nil {
+			if err := filepath.Walk(path.Join(template_dir, "revel", "views", theme, "crud"), scan); err != nil {
 				return err
 			}
 		}

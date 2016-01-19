@@ -1,0 +1,75 @@
+
+
+<!-- 提示信息开始 -->
+{{if .flash.success}}
+<div class="alert alert-success">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+  <span aria-hidden="true">&times;</span>
+  </button>
+  <strong>Success! </strong>{{.flash.success}}
+</div>
+{{end}}
+
+{{if .flash.error}}
+<div class="alert alert-warning">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+  <span aria-hidden="true">&times;</span>
+  </button>
+  <strong>Warning! </strong>{{.flash.error}}
+</div>
+{{end}}
+<!-- 提示信息结束 -->
+
+<!-- 表格列表 开始 -->
+<div class="panel panel-default">
+  <div class="panel-body">
+
+  {{if not .items}}
+  <p>暂无有效记录。</p>
+  {{else}}
+  <table class="table table-hover">
+      <thead>
+        <th><input type="checkbox" onclick="check(this)"></th>
+        <th>名称</th>
+        <th>邮箱</th>
+        <th>性别</th>
+        <th>状态</th>
+        <th>更新时间</th>
+        
+        <th>操作</th>
+      </thead>
+      <tbody>
+          {{range .items}}
+          <tr>
+            
+            <td>{{widget "checkbox" "id" .ID "w"}}</td>
+            
+            
+            <td>{{widget "text" "name"  .Name "r" ""}}</td>
+            
+            <td>{{widget "email" "mailbox"  .Mailbox "r" ""}}</td>
+            
+            <td>{{widget "selection" "sex"  .Sex "r" "user_accounts_sex"}}</td>
+            
+            <td>{{widget "selection" "status"  .Status "r" "user_accounts_status"}}</td>
+            
+            <td>{{widget "datetime" "update_at"  .UpdateAt "r" ""}}</td>
+            
+            <td>
+              <a href="/user.account.detail/{{.ID}}">详情</a>
+              <a href="/user.account.update/{{.ID}}">修改</a>
+              <a href="/user.account.remove/{{.ID}}">删除</a>
+            </td>
+          </tr>
+          {{end}}
+      </tbody>
+      <tfoot>
+          <tr>
+              <td colspan="36">一共有<strong>{{.total}}</strong>记录。</td>
+          </tr>
+      </tfoot>
+  </table>
+  {{.pagination}}
+  {{end}}
+  </div>
+</div>

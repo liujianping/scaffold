@@ -6,8 +6,8 @@
 <div class="container-fluid">
   <ol class="breadcrumb">
     <li><a href="/">home</a></li>
-    <li><a href="/[[.ModuleName]].index">[[.ModuleName]]</a></li>
-    <li class="active">[[.ModuleName]].detail</li>
+    <li><a href="/[[.ModuleName]].index">[[.table.Tag "caption"]]</a></li>
+    <li class="active">[[.table.Tag "caption"]]_详情</li>
   </ol>
   <div class="panel panel-default">
     <div class="panel-body" id="board">
@@ -19,7 +19,9 @@
     <dl class="dl-horizontal">
       [[range .table.Columns]]
       <dt>[[.Tag "caption"]]</dt>
-      <dd>{{.[[.Field | camel | lint]]}}</dd>
+      <dd>
+      {{widget "[[.Tag "widget"]]" "[[.Field]]"  .[[.Field | camel | lint]] "r" "[[.Tag "relation"]]"}}
+      </dd>
       [[end]]
     </dl>
     {{end}}

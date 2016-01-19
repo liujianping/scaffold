@@ -6,9 +6,15 @@
     </ol>
     <div class="list-group">
       <a href="#" class="list-group-item disabled">
+      widget
+      </a>
+      <a href="/widget.index" class="list-group-item">控件</a>
+    </div>
+    <div class="list-group">
+      <a href="#" class="list-group-item disabled">
       index
       </a>
-      [[range .tables]][[if eq (.Tag "index") "y"]]<a href="/[[.Name | module]].index" class="list-group-item">[[.Tag "caption"]]</a>
+      [[range .tables]][[if eq (.Tag "index") "y"]]<a href="/[[.Name | module]].index" class="list-group-item"><span class="badge">{{[[.Name | class]]Count}}</span>[[.Tag "caption"]]</a>
       [[end]][[end]]
     </div>
 </div>

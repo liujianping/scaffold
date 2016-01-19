@@ -6,8 +6,8 @@
 <div class="container-fluid">
 <ol class="breadcrumb">
   <li><a href="/">home</a></li>
-  <li><a href="/[[.ModuleName]].index">[[.ModuleName]]</a></li>
-  <li class="active">[[.ModuleName]].add</li>
+  <li><a href="/[[.ModuleName]].index">[[.table.Tag "caption"]]</a></li>
+  <li class="active">[[.table.Tag "caption"]]_新增</li>
 </ol>
 <div class="panel panel-default">
   <div class="panel-body" id="board">
@@ -18,17 +18,19 @@
     </fieldset>
 
     [[range .table.Columns]]
+    [[if not .IsPrimary]]
     {{with $field := field "obj.[[.Field | camel | lint]]" .}}
     <div class="form-group">
       <label class="col-sm-2 control-label">[[.Tag "caption"]]</label>
       <div class="col-sm-6">
-        <input type="text" class="form-control" name="{{$field.Name}}" value="{{$field.Value}}">
+      {{widget "[[.Tag "widget"]]" $field.Name  $field.Value "w" "[[.Tag "relation"]]"}}
       </div>
       <div class="col-sm-4">
         <span class="error">{{$field.Error}}</span>
       </div>
     </div>
     {{end}}
+    [[end]]
     [[end]]
 
     <div class="form-group">

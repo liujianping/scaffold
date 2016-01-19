@@ -1,0 +1,67 @@
+
+
+{{set . "title" "user.post.detail"}}
+{{template "header" .}}
+
+<div class="container-fluid">
+  <ol class="breadcrumb">
+    <li><a href="/">home</a></li>
+    <li><a href="/user.post.index">会员帖子</a></li>
+    <li class="active">会员帖子_详情</li>
+  </ol>
+  <div class="panel panel-default">
+    <div class="panel-body" id="board">
+
+    <fieldset>
+        <legend class="">user.post.detail</legend>
+    </fieldset>
+    {{with .obj}}
+    <dl class="dl-horizontal">
+      
+      <dt>编号</dt>
+      <dd>
+      {{widget "" "id"  .ID "r" ""}}
+      </dd>
+      
+      <dt>作者</dt>
+      <dd>
+      {{widget "finder" "user_account_id"  .UserAccountID "r" "user_accounts"}}
+      </dd>
+      
+      <dt>标题</dt>
+      <dd>
+      {{widget "text" "title"  .Title "r" ""}}
+      </dd>
+      
+      <dt>内容</dt>
+      <dd>
+      {{widget "textarea" "content"  .Content "r" ""}}
+      </dd>
+      
+      <dt>图片</dt>
+      <dd>
+      {{widget "file" "image_url"  .ImageURL "r" ""}}
+      </dd>
+      
+      <dt>状态</dt>
+      <dd>
+      {{widget "selection" "status"  .Status "r" "user_posts_status"}}
+      </dd>
+      
+      <dt>创建时间</dt>
+      <dd>
+      {{widget "datetime" "create_at"  .CreateAt "r" ""}}
+      </dd>
+      
+      <dt>更新时间</dt>
+      <dd>
+      {{widget "datetime" "update_at"  .UpdateAt "r" ""}}
+      </dd>
+      
+    </dl>
+    {{end}}
+    </div>
+  </div>
+</div>
+
+{{template "footer" .}}

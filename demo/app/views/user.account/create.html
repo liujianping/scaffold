@@ -1,0 +1,161 @@
+
+
+{{set . "title" "user.account.add"}}
+{{template "header" .}}
+
+<div class="container-fluid">
+<ol class="breadcrumb">
+  <li><a href="/">home</a></li>
+  <li><a href="/user.account.index">会员账号</a></li>
+  <li class="active">会员账号_新增</li>
+</ol>
+<div class="panel panel-default">
+  <div class="panel-body" id="board">
+
+  <form class="form-horizontal" action="/user.account.create" method="POST">
+    <fieldset>
+      <legend class="">user.account.add</legend>
+    </fieldset>
+
+    
+    
+    
+    
+    {{with $field := field "obj.Name" .}}
+    <div class="form-group">
+      <label class="col-sm-2 control-label">名称</label>
+      <div class="col-sm-6">
+      {{widget "text" $field.Name  $field.Value "w" ""}}
+      </div>
+      <div class="col-sm-4">
+        <span class="error">{{$field.Error}}</span>
+      </div>
+    </div>
+    {{end}}
+    
+    
+    
+    {{with $field := field "obj.Mailbox" .}}
+    <div class="form-group">
+      <label class="col-sm-2 control-label">邮箱</label>
+      <div class="col-sm-6">
+      {{widget "email" $field.Name  $field.Value "w" ""}}
+      </div>
+      <div class="col-sm-4">
+        <span class="error">{{$field.Error}}</span>
+      </div>
+    </div>
+    {{end}}
+    
+    
+    
+    {{with $field := field "obj.Sex" .}}
+    <div class="form-group">
+      <label class="col-sm-2 control-label">性别</label>
+      <div class="col-sm-6">
+      {{widget "selection" $field.Name  $field.Value "w" "user_accounts_sex"}}
+      </div>
+      <div class="col-sm-4">
+        <span class="error">{{$field.Error}}</span>
+      </div>
+    </div>
+    {{end}}
+    
+    
+    
+    {{with $field := field "obj.Description" .}}
+    <div class="form-group">
+      <label class="col-sm-2 control-label">描述</label>
+      <div class="col-sm-6">
+      {{widget "textarea" $field.Name  $field.Value "w" ""}}
+      </div>
+      <div class="col-sm-4">
+        <span class="error">{{$field.Error}}</span>
+      </div>
+    </div>
+    {{end}}
+    
+    
+    
+    {{with $field := field "obj.Password" .}}
+    <div class="form-group">
+      <label class="col-sm-2 control-label">密码</label>
+      <div class="col-sm-6">
+      {{widget "password" $field.Name  $field.Value "w" ""}}
+      </div>
+      <div class="col-sm-4">
+        <span class="error">{{$field.Error}}</span>
+      </div>
+    </div>
+    {{end}}
+    
+    
+    
+    {{with $field := field "obj.HeadURL" .}}
+    <div class="form-group">
+      <label class="col-sm-2 control-label">头像</label>
+      <div class="col-sm-6">
+      {{widget "file" $field.Name  $field.Value "w" ""}}
+      </div>
+      <div class="col-sm-4">
+        <span class="error">{{$field.Error}}</span>
+      </div>
+    </div>
+    {{end}}
+    
+    
+    
+    {{with $field := field "obj.Status" .}}
+    <div class="form-group">
+      <label class="col-sm-2 control-label">状态</label>
+      <div class="col-sm-6">
+      {{widget "selection" $field.Name  $field.Value "w" "user_accounts_status"}}
+      </div>
+      <div class="col-sm-4">
+        <span class="error">{{$field.Error}}</span>
+      </div>
+    </div>
+    {{end}}
+    
+    
+    
+    {{with $field := field "obj.CreateAt" .}}
+    <div class="form-group">
+      <label class="col-sm-2 control-label">创建时间</label>
+      <div class="col-sm-6">
+      {{widget "datetime" $field.Name  $field.Value "w" ""}}
+      </div>
+      <div class="col-sm-4">
+        <span class="error">{{$field.Error}}</span>
+      </div>
+    </div>
+    {{end}}
+    
+    
+    
+    {{with $field := field "obj.UpdateAt" .}}
+    <div class="form-group">
+      <label class="col-sm-2 control-label">更新时间</label>
+      <div class="col-sm-6">
+      {{widget "datetime" $field.Name  $field.Value "w" ""}}
+      </div>
+      <div class="col-sm-4">
+        <span class="error">{{$field.Error}}</span>
+      </div>
+    </div>
+    {{end}}
+    
+    
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-default">确  认</button>
+      </div>
+    </div>
+  </form>
+
+  </div>
+</div>
+</div>
+
+{{template "footer" .}}

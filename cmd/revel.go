@@ -48,11 +48,9 @@ func revelInit(ctx *cli.Context) {
 		return
 	}
 
-	for _, project := range args {
-		if err := revel_init(project, template_dir, force); err != nil {
-			fmt.Println("scaffold revel init <"+project+"> failed:", err)
-			continue
-		}
+	if err := revel_init(args[0], template_dir, force); err != nil {
+		fmt.Println("scaffold revel init <"+args[0]+"> failed:", err)
+		return
 	}
 }
 
@@ -75,12 +73,11 @@ func revelIndex(ctx *cli.Context) {
 		return
 	}
 
-	for _, project := range args {
-		if err := revel_index(project, template_dir, theme, force); err != nil {
-			fmt.Println("scaffold revel index <"+project+"> failed:", err)
-			continue
-		}
+	if err := revel_index(args[0], template_dir, theme, force); err != nil {
+		fmt.Println("scaffold revel index <"+args[0]+"> failed:", err)
+		return
 	}
+
 }
 
 func revelModule(ctx *cli.Context) {

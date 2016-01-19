@@ -25,10 +25,11 @@
   <div class="panel-body">
 
   {{if not .items}}
-  <p>暂无有效用户账户。</p>
+  <p>暂无有效记录。</p>
   {{else}}
   <table class="table table-hover">
       <thead>
+        <th><input type="checkbox" onclick="check(this)"></th>
         [[range .table.Columns]][[if eq (.Tag "index") "y"]]<th>[[.Tag "caption"]]</th>
         [[end]][[end]]
         <th>操作</th>
@@ -36,7 +37,11 @@
       <tbody>
           {{range .items}}
           <tr>
-            [[range .table.Columns]][[if eq (.Tag "index") "y"]]<td>{{.[[.Field | camel | lint]]}}</td>
+            [[with .table.PrimaryColumn]]
+            <td>{{widget "checkbox" "[[.Field]]" .[[.Field | camel | lint]] "w"}}</td>
+            [[end]]
+            [[range .table.Columns]][[if eq (.Tag "index") "y"]]
+            <td>{{widget "[[.Tag "widget"]]" "[[.Field]]"  .[[.Field | camel | lint]] "r" "[[.Tag "relation"]]"}}</td>
             [[end]][[end]]
             <td>
               <a href="/[[.ModuleName]].detail/{{.ID}}">详情</a>
@@ -48,7 +53,7 @@
       </tbody>
       <tfoot>
           <tr>
-              <td colspan="10">一共有<strong>{{.total}}</strong>记录。</td>
+              <td colspan="36">一共有<strong>{{.total}}</strong>记录。</td>
           </tr>
       </tfoot>
   </table>

@@ -1,0 +1,43 @@
+<!-- 查询条件开始 -->
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form class="form-inline" id="finder_query">
+      <div class="form-group">
+        <!-- query -->
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+        
+        <!-- sort -->
+        {{with $field := field "sort.Value" .}}
+        <label>排序</label>
+        <select class="form-control" name="{{$field.Name}}" value="{{$field.Flash}}">
+          <option value="0">默认排序</option>
+          <option value="1">按时间降序</option>
+          <option value="2">按时间升序</option>
+        </select>
+        {{end}}
+        <!-- page -->
+        <input type="hidden" id="page_no" name="page.No" value="0">
+        <input type="hidden" id="page_size" name="page.Size" value="20">
+        <!-- button -->
+        <button type="button" class="btn btn-primary" id="finder_search">查询</button>
+      </div> 
+    </form>
+  </div>
+</div>
+<!-- 查询条件结束 -->
+<div id="finder_board">
+{{template "selection/finder.query.html" .}}  
+</div>

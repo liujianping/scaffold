@@ -1,0 +1,62 @@
+
+
+{{set . "title" "selection.detail"}}
+{{template "header" .}}
+
+<div class="container-fluid">
+  <ol class="breadcrumb">
+    <li><a href="/">home</a></li>
+    <li><a href="/selection.index">系统状态</a></li>
+    <li class="active">系统状态_详情</li>
+  </ol>
+  <div class="panel panel-default">
+    <div class="panel-body" id="board">
+
+    <fieldset>
+        <legend class="">selection.detail</legend>
+    </fieldset>
+    {{with .obj}}
+    <dl class="dl-horizontal">
+      
+      <dt>编号</dt>
+      <dd>
+      {{widget "" "id"  .ID "r" ""}}
+      </dd>
+      
+      <dt>名称</dt>
+      <dd>
+      {{widget "text" "name"  .Name "r" ""}}
+      </dd>
+      
+      <dt>代码</dt>
+      <dd>
+      {{widget "text" "code"  .Code "r" ""}}
+      </dd>
+      
+      <dt>选项名称</dt>
+      <dd>
+      {{widget "text" "option_name"  .OptionName "r" ""}}
+      </dd>
+      
+      <dt>选项代码</dt>
+      <dd>
+      {{widget "text" "option_code"  .OptionCode "r" ""}}
+      </dd>
+      
+      <dt>选项值</dt>
+      <dd>
+      {{widget "number" "option_value"  .OptionValue "r" ""}}
+      </dd>
+      
+      <dt>描述</dt>
+      <dd>
+      {{widget "text" "description"  .Description "r" ""}}
+      </dd>
+      
+    </dl>
+    {{end}}
+    </div>
+  </div>
+</div>
+
+{{template "footer" .}}

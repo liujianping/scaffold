@@ -5,10 +5,9 @@
 
 <script type="text/javascript" charset="utf-8">
   function search(page_no, page_size) {
-    $("#page_no").val(page_no)
-    $("#page_size").val(page_size)
+    $("#page_no").val(page_no);
+    if (page_size) { $("#page_size").val(page_size); }
     frm = $("form#query").serialize()
-    console.log(frm)
     $.post("/[[.ModuleName]].query", frm, function(html){
       $('#board').empty()
       $('#board').append(html) 
@@ -18,13 +17,16 @@
   function create() {
     window.location.assign("/[[.ModuleName]].create")
   }
-
+  
+  function check(elem) {
+    $(":checkbox").prop("checked", $(elem).prop('checked'))
+  }
  </script>
 
 <div class="container-fluid">
   <ol class="breadcrumb">
     <li><a href="/">home</a></li>
-    <li class="active">[[.ModuleName]]</li>
+    <li class="active">[[.table.Tag "caption"]]</li>
   </ol>
   <!-- 查询条件开始 -->
   <div class="panel panel-default">
@@ -36,7 +38,7 @@
             [[if ne (.Tag "query") ""]]
             {{with $field := field "query.[[.Field | camel | lint]]" .}}
               <label>[[.Tag "caption"]]</label>
-              <input type="text" class="form-control" name="{{$field.Name}}" value="{{$field.Value}}">
+              {{widget "[[.Tag "widget"]]" $field.Name  $field.Value "w" "[[.Tag "relation"]]"}}
             {{end}}
             [[end]]
           [[end]]
@@ -50,10 +52,10 @@
           </select>
           {{end}}
           <!-- page -->
-          <input type="hidden" id="page_no" name="page.No"/>
-          <input type="hidden" id="page_size" name="page.Size"/>
+          <input type="hidden" id="page_no" name="page.No" value="0"/>
+          <input type="hidden" id="page_size" name="page.Size" value="20"/>
           <!-- button -->
-          <button type="button" class="btn btn-primary" onclick="search();">查询</button>
+          <button type="button" class="btn btn-primary" onclick="search('0');">查询</button>
           <button type="button" class="btn btn-success" onclick="create();">新增</button>
         </div> 
       </form>

@@ -1,0 +1,49 @@
+# Routes
+module:testrunner
+# Ignore favicon requests
+GET     /favicon.ico                            404
+GET     /public/*filepath                       Static.Serve("public")
+GET     /upload/*filepath                       Static.Serve("upload")
+
+# Scaffold Routes
+GET     /                                       DBController.Index
+GET     /widget.index                           WidgetController.Index
+GET     /widget.upload                          WidgetController.Upload
+POST    /widget.upload                          WidgetController.UploadPost
+GET     /widget.editor                          WidgetController.Editor
+POST    /widget.editor                          WidgetController.EditorPost
+
+
+GET     /option.index                    OptionController.Index     
+POST    /option.query                    OptionController.Query
+POST    /option.finder.index             OptionController.FinderIndex
+POST    /option.finder.query             OptionController.FinderQuery         
+GET     /option.detail/:id               OptionController.Detail      
+GET     /option.create                   OptionController.Create     
+POST    /option.create                   OptionController.CreatePost
+GET     /option.update/:id               OptionController.Update
+POST    /option.update                   OptionController.UpdatePost
+GET     /option.remove/:id               OptionController.Remove     
+
+GET     /user.account.index                    UserAccountController.Index     
+POST    /user.account.query                    UserAccountController.Query
+POST    /user.account.finder.index             UserAccountController.FinderIndex
+POST    /user.account.finder.query             UserAccountController.FinderQuery         
+GET     /user.account.detail/:id               UserAccountController.Detail      
+GET     /user.account.create                   UserAccountController.Create     
+POST    /user.account.create                   UserAccountController.CreatePost
+GET     /user.account.update/:id               UserAccountController.Update
+POST    /user.account.update                   UserAccountController.UpdatePost
+GET     /user.account.remove/:id               UserAccountController.Remove     
+
+GET     /user.post.index                    UserPostController.Index     
+POST    /user.post.query                    UserPostController.Query
+POST    /user.post.finder.index             UserPostController.FinderIndex
+POST    /user.post.finder.query             UserPostController.FinderQuery         
+GET     /user.post.detail/:id               UserPostController.Detail      
+GET     /user.post.create                   UserPostController.Create     
+POST    /user.post.create                   UserPostController.CreatePost
+GET     /user.post.update/:id               UserPostController.Update
+POST    /user.post.update                   UserPostController.UpdatePost
+GET     /user.post.remove/:id               UserPostController.Remove     
+

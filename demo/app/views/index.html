@@ -1,0 +1,23 @@
+{{set . "title" "index"}}
+{{template "header" .}}
+<div class="container-fluid">
+    <ol class="breadcrumb">
+        <li class="active">home</li>
+    </ol>
+    <div class="list-group">
+      <a href="#" class="list-group-item disabled">
+      widget
+      </a>
+      <a href="/widget.index" class="list-group-item">控件</a>
+    </div>
+    <div class="list-group">
+      <a href="#" class="list-group-item disabled">
+      index
+      </a>
+      <a href="/option.index" class="list-group-item"><span class="badge">{{OptionCount}}</span>系统状态</a>
+      <a href="/user.account.index" class="list-group-item"><span class="badge">{{UserAccountCount}}</span>会员账号</a>
+      <a href="/user.post.index" class="list-group-item"><span class="badge">{{UserPostCount}}</span>会员帖子</a>
+      
+    </div>
+</div>
+{{template "footer" .}}

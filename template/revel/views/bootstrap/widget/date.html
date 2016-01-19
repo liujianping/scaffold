@@ -1,0 +1,13 @@
+{{if eq (index .options 0) "r"}}
+{{.value | datetime}}
+{{else}}
+<div id="{{.name | domid}}">
+<input size="16" type="text"  class="form-control datetime" name="{{.name}}">
+</div>
+<script type="text/javascript">
+    var dt = $("#{{.name | domid}}")
+    var a = new $.calendar(dt[0], function(date){
+        $('input[name="{{.name}}"]').val(date)
+    }).hide().time("yyyy/MM/dd",{{.value}})
+</script>
+{{end}}

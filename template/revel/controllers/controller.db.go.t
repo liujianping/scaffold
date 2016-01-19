@@ -1,13 +1,16 @@
 package controllers
 
 import (
-	"bytes"
 	"database/sql"
 	"fmt"
-	"html/template"
 
+	"[[.project]]/app/models"
 	"github.com/revel/revel"
 	gorp "gopkg.in/gorp.v1"
+)
+
+var (
+	db *models.Model
 )
 
 type DBController struct {
@@ -20,7 +23,7 @@ func (c *DBController) Index() revel.Result {
 }
 
 func (c *DBController) Begin() revel.Result {
-	txn, err := model.Begin()
+	txn, err := db.Begin()
 	if err != nil {
 		panic(err)
 	}
@@ -50,45 +53,25 @@ func (c *DBController) Rollback() revel.Result {
 	return nil
 }
 
-func (c *DBController) Pagination(fn string, total, page, size int) template.HTML {
-	if total <= size {
-		return template.HTML("")
+func InitDB() {
+	driver := revel.Config.StringDefault("db.driver", "mysql")
+	host := revel.Config.StringDefault("db.host", "127.0.0.1")
+	port := revel.Config.IntDefault("db.port", 3306)
+	user := revel.Config.StringDefault("db.username", "")
+	pass := revel.Config.StringDefault("db.password", "")
+	name := revel.Config.StringDefault("db.database", "")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local&strict=true&sql_notes=false",
+		user, pass, host, port, name)
+
+	m, err := models.NewModel(driver, dsn)
+	if err != nil {
+		panic(err)
 	}
-	pages := total / size
-	if total%size > 0 {
-		pages = pages + 1
-	}
 
-	var buffer bytes.Buffer
-	buffer.WriteString("<nav>")
-	buffer.WriteString("<ul class=\"pagination pagination-sm\">")
-	for i := 0; i < pages; i++ {
-		if i == page {
-			buffer.WriteString("<li class=\"active\">")
-		} else {
-			buffer.WriteString("<li>")
-		}
+	db = m
+	db.TraceOn("[db]", revel.INFO)
+}
 
-		if i == 0 {
-			buffer.WriteString(fmt.Sprintf("<a href=\"javascript:%s(%d, %d);\">", fn, i, size))
-			buffer.WriteString("<span aria-hidden=\"true\">&laquo;</span>")
-			buffer.WriteString("</a>")
-			buffer.WriteString("</li>")
-			continue
-		}
-
-		if i+1 == pages {
-			buffer.WriteString(fmt.Sprintf("<a href=\"javascript:%s(%d, %d);\">", fn, i, size))
-			buffer.WriteString("<span aria-hidden=\"true\">&raquo;</span>")
-			buffer.WriteString("</a>")
-			buffer.WriteString("</li>")
-			continue
-		}
-
-		buffer.WriteString(fmt.Sprintf("<a href=\"javascript:%s(%d, %d);\">%d</a>", fn, i, size, i+1))
-		buffer.WriteString("</li>")
-	}
-	buffer.WriteString("</ul>")
-	buffer.WriteString("</nav>")
-	return template.HTML(buffer.String())
+func init() {
+	revel.OnAppStart(InitDB)
 }

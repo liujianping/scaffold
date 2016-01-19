@@ -1,0 +1,130 @@
+
+
+{{set . "title" "selection"}}
+{{template "header" .}}
+
+<div class="container-fluid">
+<ol class="breadcrumb">
+  <li><a href="/">home</a></li>
+  <li><a href="/selection.index">系统状态</a></li>
+  <li class="active">系统状态_修改</li>
+</ol>
+<div class="panel panel-default">
+  <div class="panel-body" id="board">
+
+<form class="form-horizontal"  action="/selection.update" method="POST">
+  <fieldset>
+    <legend class="">selection.update</legend>
+  </fieldset>
+
+  
+  {{with $field := field "obj.ID" .}}
+  
+  <input type="hidden" class="form-control" name="{{$field.Name}}" value="{{$field.Value}}" >
+  
+  
+  {{end}}
+  
+  {{with $field := field "obj.Name" .}}
+  
+  <div class="form-group">
+    <label class="col-sm-2 control-label">名称</label>
+    <div class="col-sm-6">
+    {{widget "text" $field.Name  $field.Value "w" ""}}
+    </div>
+    <div class="col-sm-4">
+      <span class="error">{{$field.Error}}</span>
+    </div>
+  </div>
+  
+  
+  {{end}}
+  
+  {{with $field := field "obj.Code" .}}
+  
+  <div class="form-group">
+    <label class="col-sm-2 control-label">代码</label>
+    <div class="col-sm-6">
+    {{widget "text" $field.Name  $field.Value "w" ""}}
+    </div>
+    <div class="col-sm-4">
+      <span class="error">{{$field.Error}}</span>
+    </div>
+  </div>
+  
+  
+  {{end}}
+  
+  {{with $field := field "obj.OptionName" .}}
+  
+  <div class="form-group">
+    <label class="col-sm-2 control-label">选项名称</label>
+    <div class="col-sm-6">
+    {{widget "text" $field.Name  $field.Value "w" ""}}
+    </div>
+    <div class="col-sm-4">
+      <span class="error">{{$field.Error}}</span>
+    </div>
+  </div>
+  
+  
+  {{end}}
+  
+  {{with $field := field "obj.OptionCode" .}}
+  
+  <div class="form-group">
+    <label class="col-sm-2 control-label">选项代码</label>
+    <div class="col-sm-6">
+    {{widget "text" $field.Name  $field.Value "w" ""}}
+    </div>
+    <div class="col-sm-4">
+      <span class="error">{{$field.Error}}</span>
+    </div>
+  </div>
+  
+  
+  {{end}}
+  
+  {{with $field := field "obj.OptionValue" .}}
+  
+  <div class="form-group">
+    <label class="col-sm-2 control-label">选项值</label>
+    <div class="col-sm-6">
+    {{widget "number" $field.Name  $field.Value "w" ""}}
+    </div>
+    <div class="col-sm-4">
+      <span class="error">{{$field.Error}}</span>
+    </div>
+  </div>
+  
+  
+  {{end}}
+  
+  {{with $field := field "obj.Description" .}}
+  
+  <div class="form-group">
+    <label class="col-sm-2 control-label">描述</label>
+    <div class="col-sm-6">
+    {{widget "text" $field.Name  $field.Value "w" ""}}
+    </div>
+    <div class="col-sm-4">
+      <span class="error">{{$field.Error}}</span>
+    </div>
+  </div>
+  
+  
+  {{end}}
+  
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default">确  认</button>
+    </div>
+  </div>
+</form>
+
+  </div>
+</div>
+</div>
+
+{{template "footer" .}}

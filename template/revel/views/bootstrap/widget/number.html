@@ -1,0 +1,4 @@
+{{if eq (index .options 0) "r"}}{{.value}}{{end}}
+{{if eq (index .options 0) "w"}}
+<input type="number" class="form-control" min="0" step="1" name="{{.name}}" value={{.value}}>
+{{end}}

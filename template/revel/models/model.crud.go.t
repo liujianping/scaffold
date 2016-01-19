@@ -42,6 +42,14 @@ func (obj [[.ClassName]]) Columns() []string {
 	return columns
 }
 
+func (obj [[.ClassName]]) Count(m *Model) int64 {
+	t := bsql.TABLE(obj.TableName())
+	SQL := bsql.NewQuerySQL(t)
+	stmt := SQL.CountStatment()
+	count, _ := m.SelectInt(stmt.SQLFormat(), stmt.SQLParams()...)
+	return count
+}
+
 func (obj [[.ClassName]]) Search(m *Model,
 	query [[.ClassName]]Query,
 	sort [[.ClassName]]SortBy,
@@ -79,8 +87,10 @@ func (obj [[.ClassName]]) Validate(v *revel.Validation) {
 
 //! model query
 type [[.ClassName]]Query struct {
-    [[range .table.Columns]][[if ne (.Tag "query") ""]][[.Field | camel | lint]]    [[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"[[.Tag "query"]]"`[[end]]
-    [[end]]
+    [[range .table.Columns]]
+    [[if ne (.Tag "query") ""]][[.Field | camel | lint]]    [[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"[[.Tag "query"]]"`[[else if ne (.Tag "find") ""]]
+    [[.Field | camel | lint]]    [[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"[[.Tag "query"]]"`[[end]]
+  	[[end]]
 }
 
 func (obj [[.ClassName]]Query) SQL(query *bsql.QuerySQL) {
@@ -99,7 +109,7 @@ func (obj [[.ClassName]]Query) SQL(query *bsql.QuerySQL) {
 //! ===========================================================================
 //! model query sortby
 type [[.ClassName]]SortBy struct {
-	Value int
+	Value int64
 }
 
 func (sortBy [[.ClassName]]SortBy) SQL(query *bsql.QuerySQL) {	
@@ -108,21 +118,18 @@ func (sortBy [[.ClassName]]SortBy) SQL(query *bsql.QuerySQL) {
 	case 1:
 		query.OrderByDesc(t.Column(Default[[.ClassName]].PrimaryKey()))
 	case 2:
-		query.OrderByAsc(t.Column(Default[[.ClassName]].PrimaryKey()))
+		query.OrderByAsc(t.Column(Default[[.ClassName]].PrimaryKey()))				
 	}
 }
 
 //! ===========================================================================
 //! model page
 type [[.ClassName]]Page struct {
-	No   int
-	Size int
+	No   int64
+	Size int64
 }
 
 func (page [[.ClassName]]Page) SQL(query *bsql.QuerySQL) {
-	if page.Size == 0 {
-		page.Size = DefaultPageSize
-	}
 	query.Limit(page.No, page.Size)
 }
 

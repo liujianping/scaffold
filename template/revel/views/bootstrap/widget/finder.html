@@ -1,0 +1,104 @@
+{{if eq (index .options 0) "r"}}
+{{if .value}}
+<a href="/{{index .options 1 | module}}.detail/{{.value}}">{{.value}}</a>
+{{else}}
+暂无  
+{{end}}
+
+{{end}}
+{{if eq (index .options 0) "w"}}
+<div class="input-group">
+  <input type="text"  class="form-control" id="{{index .options 1}}_value" name="{{.name}}" value={{.value}}>
+  <span class="input-group-btn">
+    <button class="btn btn-default" type="button" data-toggle="modal" data-target="#{{index .options 1 | module | domid}}-modal">
+    查找
+    </button>
+  </span>
+</div>
+
+<!-- Modal -->
+<div id="{{index .options 1 | module | domid}}-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{{index .options 1 | module}}.find</h4>
+      </div>
+      <div class="modal-body">
+      
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-success btn-done" data-dismiss="modal">选择</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script type="text/javascript">
+    $('#{{index .options 1| module | domid}}-modal').on('shown.bs.modal', function (e) {
+        var modal = $(this)
+        $.post("/{{index .options 1 | module}}.finder.index", null, function(html){
+          modal.find('.modal-body').empty()
+          modal.find('.modal-body').append(html)
+
+          modal.find('#finder_search').off('click').on('click', function(){
+            searchit(modal,$(this))
+          })
+
+          modal.find('#finder_checkbox').off('click').on('click', function(){
+            checkit(modal, $(this))
+          })
+
+          modal.find('.btn-done').off('click').on('click', function(){
+            modal.find(':checkbox').each(function(){
+              if ($(this).prop('checked')) {
+                $('#{{index .options 1}}_value').val($(this).val())
+              }
+            })
+          })
+
+          modal.find('a#page').off('click').on('click', function(){
+            pagination(modal,$(this))
+          })
+        })
+
+       function searchit(modal, self){
+          modal.find('#page_no').val('0')
+          frm = modal.find("form#finder_query").serialize()
+          $.post("/{{index .options 1 | module}}.finder.query", frm, function(html){
+            modal.find('#finder_board').empty()
+            modal.find('#finder_board').append(html)
+            modal.find('a#page').off('click').on('click', function(){
+              pagination(modal,$(this))
+            })
+            modal.find('#finder_checkbox').off('click').on('click', function(){
+              checkit(modal, $(this))
+            }) 
+          })
+       }
+
+       function checkit(modal, self){
+          modal.find(":checkbox").prop("checked", self.prop('checked'))
+       }
+
+       function pagination(modal,self){
+        modal.find('#page_size').val(modal.find('#{{index .options 1 | module | domid}}-pagination').data("value"))
+        modal.find('#page_no').val(self.data("value"))
+        frm = modal.find("form#finder_query").serialize()
+        $.post("/{{index .options 1 | module}}.finder.query", frm, function(html){
+          modal.find('#finder_board').empty()
+          modal.find('#finder_board').append(html)
+          modal.find('a#page').off('click').on('click', function(){
+            pagination(modal,$(this))
+          })
+          modal.find('#finder_checkbox').off('click').on('click', function(){
+            checkit(modal, $(this))
+          })              
+        })
+      }
+    })
+</script>
+{{end}}
+
