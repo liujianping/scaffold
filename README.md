@@ -13,7 +13,7 @@ scaffold, generate revel project by database schema
 
 [索引页]
 
-![index](http://7xjh31.com1.z0.glb.clouddn.com/index.png)
+![home](http://7xjh31.com1.z0.glb.clouddn.com/home.png)
 
 [控件]
 
@@ -28,6 +28,10 @@ scaffold, generate revel project by database schema
 ![update](http://7xjh31.com1.z0.glb.clouddn.com/add.png)
 
 以上图片效果均为实际生成效果:)
+
+[列表页]
+
+![index](http://7xjh31.com1.z0.glb.clouddn.com/index.png)
 
 ### 安装
 
