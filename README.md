@@ -177,6 +177,7 @@ INSERT INTO `options`(
                 - email       邮箱输入控件
                 - datetime    时间输入控件 
                 - file        文件上传输入控件
+                - finder      管理表记录查找控件
                 - textarea    编辑区域输入控件
                 - finder      查询关联表控件
                 - selection   查询关联selection控件 
