@@ -27,11 +27,11 @@ scaffold, generate revel project by database schema
 
 ![update](http://7xjh31.com1.z0.glb.clouddn.com/add.png)
 
-以上图片效果均为实际生成效果:)
-
 [列表页]
 
 ![index](http://7xjh31.com1.z0.glb.clouddn.com/index.png)
+
+以上图片效果均为实际生成效果, 未编写一行代码:)
 
 ### 安装
 
@@ -217,3 +217,7 @@ $: revel run [project/path]
 #### TODO
 
 * 其它框架支持(beego等)
+
+#### Thanks 
+
+[jaywcjlove](https://github.com/jaywcjlove) 提供的datetime控件js脚本
