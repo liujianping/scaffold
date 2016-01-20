@@ -17,11 +17,6 @@ func revel_init(project string, template_dir string, force bool) error {
 		"project": project,
 	}
 
-	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "conf", "app.conf"),
-		path.Join(project_dir, "conf", "app.conf"), data, true); err != nil {
-		return err
-	}
-
 	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "models", "model.go.t"),
 		path.Join(project_dir, "app", "models", "model.go"), data, force); err != nil {
 		return err

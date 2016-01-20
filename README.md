@@ -49,16 +49,10 @@ $: go get github.com/liujianping/scaffold
 ````
 $: revel new [project/path]
 
-//! 初始化
-$: scaffold -f revel init [project/path]  
+````
+请根据实际环境配置, 增加并修改项目配置[conf/app.conf]:
 
 ````
-初始化的过程中, 会替换原有revel项目默认配置, 增加并修改了以下配置:
-
-请根据实际环境配置, 进行相应设置。
-
-````
-
 # format (datetime控件默认日期格式,如需修改请相应修改 widget/datetime.html 日期格式。需保持一致。)
 format.date             = 2006/01/02
 format.datetime         = 2006/01/02 15:04:05
@@ -67,9 +61,9 @@ format.datetime         = 2006/01/02 15:04:05
 db.driver               = mysql
 db.host                 = 127.0.0.1
 db.port                 = 3306
-db.username             = scaffold_user
-db.password             = scaffold_pass
-db.database             = scaffold
+db.username             = 
+db.password             = 
+db.database             = 
 
 # upload support qiniu (上传功能支持七牛云存储配置项)
 qiniu.enable            = false
@@ -210,23 +204,12 @@ INSERT INTO `options`(
 #### 生成代码
 
 ````
+//! 初始化
+$: scaffold -f revel init [project/path]  
+
 //! 生成所有模块代码 [mvc]
 $: scaffold -f revel module  [project/path]  "*"
 
-//! 生成指定模型代码 [m]
-$: scaffold -f revel model  [project/path]  [table_name] [table_name] ...
-
-//! 生成指定视图代码 [v]
-$: scaffold -f revel view  [project/path]  [table_name] ...
-
-//! 生成指定控制器代码 [c]
-$: scaffold -f revel controller  [project/path]  [table_name] ...
-
-````
-
-#### 索引路由
-
-````
 //! 建立索引路由
 $: scaffold -f revel index [project/path] 
 

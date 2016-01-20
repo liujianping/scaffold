@@ -86,13 +86,13 @@ func database(provider, dsn string) (*gorp.DbMap, error) {
 }
 
 //! util fns - regist
-type Table struct {
+type TableObject struct {
 	Name       string
 	PrimaryKey string
 }
 
-var tableObjects map[Table]interface{} = make(map[Table]interface{})
+var tableObjects map[TableObject]interface{} = make(map[TableObject]interface{})
 
 func registTableObject(tablename string, pk string, object interface{}) {
-	tableObjects[Table{tablename, pk}] = object
+	tableObjects[TableObject{tablename, pk}] = object
 }
