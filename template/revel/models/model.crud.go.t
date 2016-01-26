@@ -130,7 +130,7 @@ type [[.ClassName]]Page struct {
 }
 
 func (page [[.ClassName]]Page) SQL(query *bsql.QuerySQL) {
-	query.Limit(page.No, page.Size)
+	query.Page(page.No, page.Size)
 }
 
 //! ===========================================================================
