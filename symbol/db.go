@@ -3,6 +3,7 @@ package symbol
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -44,6 +45,43 @@ type Column struct {
 	sql_extra      sql.NullString
 	sql_privileges sql.NullString
 	sql_comment    sql.NullString
+}
+
+type Option struct {
+	Name        string
+	Code        string
+	OptionName  string
+	OptionCode  string
+	OptionValue int64
+}
+
+func GetOptions(db *sql.DB) (map[string][]Option, error) {
+	options := make(map[string][]Option)
+
+	rows, err := db.Query(`SELECT name, code, option_code, option_value , option_name FROM options`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var opt Option
+		if err := rows.Scan(&opt.Name, &opt.Code, &opt.OptionCode, &opt.OptionValue, &opt.OptionName); err != nil {
+			log.Println("scan failed:", err)
+			return nil, err
+		}
+
+		if sel, ok := options[opt.Code]; ok {
+			sel = append(sel, opt)
+			options[opt.Code] = sel
+		} else {
+			sel = []Option{}
+			sel = append(sel, opt)
+			options[opt.Code] = sel
+		}
+	}
+
+	return options, nil
 }
 
 func GetAllTables(db *sql.DB) ([]*Table, error) {

@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"strings"
+
 	models "github.com/liujianping/scaffold/demo/app/models"
 	routes "github.com/liujianping/scaffold/demo/app/routes"
 	"github.com/revel/revel"
@@ -198,7 +200,7 @@ func (c OptionController) FinderQuery(query models.OptionQuery,
 
 var selections = map[string]interface{}{}
 
-func SelectionWidget(code string) []models.Option {
+func GetSelection(code string) []models.Option {
 	if items, ok := selections[code]; ok {
 		return items.([]models.Option)
 	}
@@ -213,8 +215,30 @@ func SelectionWidget(code string) []models.Option {
 	return items
 }
 
+func GetOption(code, option_code string) int64 {
+	opts := GetSelection(code)
+	for _, opt := range opts {
+		if strings.ToLower(opt.OptionCode) == strings.ToLower(option_code) {
+			return opt.OptionValue
+		}
+	}
+	return 0
+}
+
+func GetOptionName(code string, option_value int64) string {
+	opts := GetSelection(code)
+	for _, opt := range opts {
+		if opt.OptionValue == option_value {
+			return opt.OptionName
+		}
+	}
+	return "未知"
+}
+
 func init() {
-	revel.TemplateFuncs["selection"] = SelectionWidget
+	revel.TemplateFuncs["selection"] = GetSelection
+	revel.TemplateFuncs["option"] = GetOption
+	revel.TemplateFuncs["option_name"] = GetOptionName
 }
 
 func OptionCount() int64 {

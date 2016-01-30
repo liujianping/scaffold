@@ -255,7 +255,7 @@ $.calendar=function(elm,json,callback){
       if(num>week&&num<solarMonth[parseInt(m-1)]+week+1){
         html = "<span>"+(num-week)+"</span>";
         d=(num-week),m<10?m="0"+parseInt(m):null,d<10?d="0"+d:null;
-        var a = y+"-"+m+"-"+d;
+        var a = y+"/"+m+"/"+d;
         elmD.append($(html).click(function(){
           self.changeWork(this,a);
           // if (self.isHide) self.calBoxs.css({"display":"none"});

@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path"
 	"reflect"
+	"strconv"
 	"text/template"
 )
 
@@ -77,6 +78,7 @@ func init() {
 	Extend("singular", Singular)
 	Extend("separate", Separate)
 	Extend("lint", Lint)
+	Extend("quote", strconv.Quote)
 	Extend("convert", Convert)
 	Extend("module", ModuleName)
 	Extend("class", ClassName)

@@ -96,7 +96,6 @@ func (obj Option) Validate(v *revel.Validation) {
 //! model query
 type OptionQuery struct {
 	Name string `db:"name"    query:"like"`
-
 	Code string `db:"code"    query:"eq"`
 
 	OptionValue int64 `db:"option_value"    query:"eq"`
@@ -139,7 +138,7 @@ type OptionPage struct {
 }
 
 func (page OptionPage) SQL(query *bsql.QuerySQL) {
-	query.Limit(page.No, page.Size)
+	query.Page(page.No, page.Size)
 }
 
 //! ===========================================================================

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"log"
 	"path"
 
 	"github.com/liujianping/scaffold/symbol"
@@ -16,6 +17,12 @@ func revel_init(project string, template_dir string, force bool) error {
 	data := map[string]interface{}{
 		"project": project,
 	}
+
+	if err := symbol.CopyDir(path.Join(template_dir, "revel", "public"),
+		path.Join(project_dir, "public")); err != nil {
+		return err
+	}
+	log.Println("copy directory =>", path.Join(project_dir, "public"))
 
 	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "models", "model.go.t"),
 		path.Join(project_dir, "app", "models", "model.go"), data, force); err != nil {

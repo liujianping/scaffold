@@ -3,6 +3,9 @@
 -- GRANT ALL PRIVILEGES ON *.* TO 'scaffold_user'@'localhost' IDENTIFIED BY 'scaffold_pass';
 -- GRANT ALL PRIVILEGES ON `scaffold`.* TO `scaffold_user`@'%';
 -- FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON *.* TO `maiya_user`@'%' IDENTIFIED BY 'maiya_pass';
+GRANT ALL PRIVILEGES ON `maiya`.* TO `maiya_user`@'localhost';
+GRANT ALL PRIVILEGES ON `maiya`.* TO `maiya_user`@'%';
 
 DROP TABLE IF EXISTS `user_accounts`;
 

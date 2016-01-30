@@ -98,8 +98,7 @@ func (obj UserAccount) Validate(v *revel.Validation) {
 
 //! model query
 type UserAccountQuery struct {
-	Name string `db:"name"    query:"like"`
-
+	Name    string `db:"name"    query:"like"`
 	Mailbox string `db:"mailbox"    query:"like"`
 
 	Status int64 `db:"status"    query:"eq"`
@@ -142,7 +141,7 @@ type UserAccountPage struct {
 }
 
 func (page UserAccountPage) SQL(query *bsql.QuerySQL) {
-	query.Limit(page.No, page.Size)
+	query.Page(page.No, page.Size)
 }
 
 //! ===========================================================================

@@ -17,9 +17,8 @@ var (
 )
 
 //! ===========================================================================
-type [[.ClassName]] struct {
-    [[range .table.Columns]][[.Field | camel | lint]]   [[.Type | convert "mysql"]] `db:"[[.Field]]"    json:"[[.Field]]"`
-    [[end]]
+type [[.ClassName]] struct {[[range .table.Columns]]
+    [[.Field | camel | lint]]   [[.Type | convert "mysql"]] `db:"[[.Field]]"    json:"[[.Field]]"`[[end]]
 }
 
 //! model table_name
@@ -79,8 +78,8 @@ func (obj [[.ClassName]]) Search(m *Model,
 
 //! model validation
 func (obj [[.ClassName]]) Validate(v *revel.Validation) {
-    [[range .table.Columns]][[if ne (.Tag "valid") ""]]v.Check(obj.[[.Field | camel | lint]], [[.Tag "valid"]])[[end]]
-    [[end]]
+    [[range .table.Columns]]
+    [[if ne (.Tag "valid") ""]]v.Check(obj.[[.Field | camel | lint]], [[.Tag "valid"]])[[end]][[end]]
 }
 
 //! ===========================================================================
@@ -89,8 +88,7 @@ func (obj [[.ClassName]]) Validate(v *revel.Validation) {
 type [[.ClassName]]Query struct {
     [[range .table.Columns]]
     [[if ne (.Tag "query") ""]][[.Field | camel | lint]]    [[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"[[.Tag "query"]]"`[[else if ne (.Tag "find") ""]]
-    [[.Field | camel | lint]]    [[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"[[.Tag "query"]]"`[[end]]
-  	[[end]]
+    [[.Field | camel | lint]]    [[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"[[.Tag "query"]]"`[[end]][[end]]
 }
 
 func (obj [[.ClassName]]Query) SQL(query *bsql.QuerySQL) {

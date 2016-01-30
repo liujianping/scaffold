@@ -49,13 +49,24 @@ func revel_index(project string, template_dir string, theme string, force bool) 
 		return err
 	}
 
+	options, err := symbol.GetOptions(db)
+	if err != nil {
+		return err
+	}
+
 	data := map[string]interface{}{
 		"project": project,
 		"tables":  tables,
+		"options": options,
+	}
+
+	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "models", "model.const.go.t"),
+		path.Join(project_dir, "app", "models", "model.const.go"), data, force); err != nil {
+		return err
 	}
 
 	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "conf", "routes"),
-		path.Join(project_dir, "conf", "routes"), data, true); err != nil {
+		path.Join(project_dir, "conf", "routes"), data, force); err != nil {
 		return err
 	}
 
@@ -73,13 +84,7 @@ func revel_index(project string, template_dir string, theme string, force bool) 
 
 	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "views", theme, "index.html"),
 		path.Join(project_dir, "app", "views", "index.html"),
-		data, true); err != nil {
-		return err
-	}
-
-	if err := symbol.RenderTemplate(path.Join(template_dir, "revel", "public", "js", "scaffold.js"),
-		path.Join(project_dir, "public", "js", "scaffold.js"),
-		data, true); err != nil {
+		data, force); err != nil {
 		return err
 	}
 
@@ -87,7 +92,7 @@ func revel_index(project string, template_dir string, theme string, force bool) 
 		if !fileInfo.IsDir() {
 			return symbol.RenderTemplate(fn,
 				path.Join(project_dir, "app", "views", "widget", fileInfo.Name()),
-				data, true)
+				data, force)
 		}
 		return nil
 	}
