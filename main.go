@@ -1,11 +1,9 @@
 package main
 
 import (
+	"github.com/liujianping/scaffold/cmd"
 	"log"
 	"os"
-	"runtime"
-
-	"github.com/liujianping/scaffold/cmd"
 )
 
 func main() {
@@ -15,6 +13,5 @@ func main() {
 		}
 	}()
 
-	runtime.GOMAXPROCS(runtime.NumCPU())
 	cmd.App().Run(os.Args)
 }
