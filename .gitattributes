@@ -1,0 +1,2 @@
+*.go.t  linguist-language=Go
+template/*  linguist-vendored  

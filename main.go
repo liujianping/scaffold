@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/liujianping/scaffold/cmd"
 	"log"
 	"os"
+
+	"github.com/liujianping/scaffold/cmd"
 )
 
 func main() {
