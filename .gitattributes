@@ -1,2 +1,1 @@
-*.go.t  linguist-language=Go
-template/revel/*  linguist-vendored  
+template/revel/* linguist-vendored
