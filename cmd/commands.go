@@ -32,6 +32,51 @@ func App() *cli.App {
 	//! app commands
 	app.Commands = []cli.Command{
 		{
+			Name:  "model",
+			Usage: "data model scaffolding",
+			Subcommands: []cli.Command{
+				{
+					Name:  "generate",
+					Usage: "generate model code",
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "driver, D",
+							Value: "mysql",
+							Usage: "database driver, now only support mysql",
+						},
+						cli.StringFlag{
+							Name:  "database, d",
+							Value: "",
+							Usage: "database name",
+						},
+						cli.StringFlag{
+							Name:  "host, H",
+							Value: "localhost",
+							Usage: "database host",
+						},
+						cli.IntFlag{
+							Name:  "port, P",
+							Value: 3306,
+							Usage: "database port",
+						},
+						cli.StringFlag{
+							Name:  "username, u",
+							Value: "root",
+							Usage: "database user name",
+						},
+						cli.StringFlag{
+							Name:  "password, p",
+							Value: "",
+							Usage: "database user password",
+						},
+					},
+					Action: func(ctx *cli.Context) {
+						modelGenerate(ctx)
+					},
+				},
+			},
+		},
+		{
 			Name:  "revel",
 			Usage: "revel project scaffolding",
 			Subcommands: []cli.Command{
