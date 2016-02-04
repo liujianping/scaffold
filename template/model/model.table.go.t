@@ -1,6 +1,10 @@
 package models
 [[set . "ClassName" (.table.Name | singular | camel)]]
 [[set . "ModuleName" (.table.Name | module)]]
+var (
+    Default[[.ClassName]]       = [[.ClassName]]{}
+)
+
 type [[.ClassName]] struct {[[range .table.Columns]]
     [[.Field | camel | lint]]   [[.Type | convert "mysql"]] `db:"[[.Field]]"`[[end]]
 }
