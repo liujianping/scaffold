@@ -146,7 +146,7 @@ func (widget WidgetController) UploadPost() revel.Result {
         if err != nil {
             return widget.RenderJson(WidgetResponse{Code: 405, Message: err.Error()})
         }
-        url = fmt.Sprintf("//%s/%s", QiniuDomain, ret.Key)
+        url = fmt.Sprintf("http://%s/%s", QiniuDomain, ret.Key)
     }
 
     return widget.RenderJson(WidgetResponse{Code: 0, Data: map[string]interface{}{

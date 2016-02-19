@@ -19,6 +19,11 @@ $: go get github.com/liujianping/scaffold
 ````
 ### Quick Start
 
+````
+$: scaffold -f=template/model -d=database -u=use -p=password github.com/liujianping/example/models
+
+````
+
 #### 1. Generate Data Model Definition Code
 
 example command:
