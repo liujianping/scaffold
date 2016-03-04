@@ -25,7 +25,7 @@
   <div class="form-group">
     <label class="col-sm-2 control-label">[[.Tag "caption"]]</label>
     <div class="col-sm-6">
-    {{widget "[[.Tag "widget"]]" $field.Name  $field.Value "[[.Tag "update"]]" "[[.Tag "relation"]]"}}
+    {{widget "[[.Tag "widget"]]" $field.Name  $field.Value "[[.Tag "update"]]" "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
     </div>
     <div class="col-sm-4">
       <span class="error">{{$field.Error}}</span>

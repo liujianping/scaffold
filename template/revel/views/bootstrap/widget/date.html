@@ -1,7 +1,7 @@
 {{if eq (index .options 0) "r"}}
 {{.value | datetime}}
 {{else}}
-<div id="{{.name | domid}}">
+<div id="{{.name | domid}}" class="form-group">
 <input size="16" type="text"  class="form-control datetime" name="{{.name}}">
 </div>
 <script type="text/javascript">

@@ -33,7 +33,7 @@
           {{range .items}}
           <tr>
             [[with .table.PrimaryColumn]]
-            <td>{{widget "checkbox" "id" .[[.Field | camel | lint]] "w"}}</td>
+            <td>{{widget "checkbox" "id" (json .) "w"}}</td>
             [[end]]
             [[range .table.Columns]][[if eq (.Tag "index") "y"]]
             <td>{{widget "[[.Tag "widget"]]" "[[.Field]]"  .[[.Field | camel | lint]] "r" "[[.Tag "relation"]]"}}</td>

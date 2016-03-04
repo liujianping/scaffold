@@ -5,10 +5,18 @@
       <div class="form-group">
         <!-- query -->
         [[range .table.Columns]]    
-          [[if ne (.Tag "finder") ""]]
+          [[if eq (.Tag "finder") "range"]]  
+            <label>[[.Tag "caption"]]</label>
+            {{with $field := field "query.[[.Field | camel | lint]]From" .}}
+              {{widget "[[.Tag "widget"]]" $field.Name  $field.Value "w" "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+            {{end}}
+            {{with $field := field "query.[[.Field | camel | lint]]To" .}}
+              - {{widget "[[.Tag "widget"]]" $field.Name  $field.Value "w" "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+            {{end}}    
+          [[else if ne (.Tag "finder") ""]]
           {{with $field := field "query.[[.Field | camel | lint]]" .}}
             <label>[[.Tag "caption"]]</label>
-            {{widget "[[.Tag "widget"]]" $field.Name  $field.Value "w" "[[.Tag "relation"]]"}}
+            {{widget "[[.Tag "widget"]]" $field.Name  $field.Value "w" "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
           {{end}}
           [[end]]
         [[end]]

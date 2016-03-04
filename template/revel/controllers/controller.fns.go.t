@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"reflect"
@@ -58,8 +59,8 @@ var (
 
 		wr := bytes.NewBuffer([]byte(""))
 		if err := tmpl.Render(wr, map[string]interface{}{
-			"name":   name,
-			"value":  value,
+			"name":    name,
+			"value":   value,
 			"options": options,
 		}); err != nil {
 			return template.HTML(err.Error())
@@ -78,6 +79,14 @@ var (
 
 	DatetimeFormat = func() string {
 		return revel.Config.StringDefault("format.datetime", "yyyy/MM/dd hh:mm:ss")
+	}
+
+	JsonEncode = func(value interface{}) string {
+		if b, err := json.Marshal(value); err == nil {
+			return string(b)
+		}
+
+		return ""
 	}
 
 	Pagination = func(widget, name string, total, page_size, page_no int64) template.HTML {
@@ -127,6 +136,6 @@ func init() {
 	revel.TemplateFuncs["datetime_format"] = DatetimeFormat
 	revel.TemplateFuncs["module"] = symbol.ModuleName
 	revel.TemplateFuncs["class"] = symbol.ClassName
+	revel.TemplateFuncs["json"] = JsonEncode
 	revel.TemplateFuncs["pagination"] = Pagination
 }
-

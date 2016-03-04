@@ -34,11 +34,19 @@
       <form class="form-inline" id="query">
         <div class="form-group">
           <!-- query -->
-          [[range .table.Columns]]    
-            [[if ne (.Tag "query") ""]]
-            {{with $field := field "query.[[.Field | camel | lint]]" .}}
+          [[range .table.Columns]]
+            [[if eq (.Tag "query") "range"]]  
+            <label>[[.Tag "caption"]]</label>
+            {{with $field := field "query.[[.Field | camel | lint]]From" .}}
+              {{widget "[[.Tag "widget"]]" $field.Name  $field.Value "w" "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+            {{end}}
+             - 
+            {{with $field := field "query.[[.Field | camel | lint]]To" .}}
+              {{widget "[[.Tag "widget"]]" $field.Name  $field.Value "w" "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+            {{end}}
+            [[else if ne (.Tag "query") ""]]{{with $field := field "query.[[.Field | camel | lint]]" .}}
               <label>[[.Tag "caption"]]</label>
-              {{widget "[[.Tag "widget"]]" $field.Name  $field.Value "w" "[[.Tag "relation"]]"}}
+              {{widget "[[.Tag "widget"]]" $field.Name  $field.Value "w" "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
             {{end}}
             [[end]]
           [[end]]

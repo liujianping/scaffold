@@ -8,16 +8,16 @@
 {{end}}
 {{if eq (index .options 0) "w"}}
 <div class="input-group">
-  <input type="text"  class="form-control" id="{{index .options 1}}_value" name="{{.name}}" value={{.value}}>
+  <input type="text"  class="form-control" id="{{.name | domid}}" name="{{.name}}" value={{.value}}>
   <span class="input-group-btn">
-    <button class="btn btn-default" type="button" data-toggle="modal" data-target="#{{index .options 1 | module | domid}}-modal">
+    <button class="btn btn-default" type="button" data-toggle="modal" data-target="#{{.name | domid}}_modal">
     查找
     </button>
   </span>
 </div>
 
 <!-- Modal -->
-<div id="{{index .options 1 | module | domid}}-modal" class="modal fade" role="dialog">
+<div id="{{.name | domid}}_modal" class="modal fade" role="dialog">
   <div class="modal-dialog modal-lg">
     <!-- Modal content-->
     <div class="modal-content">
@@ -37,7 +37,7 @@
   </div>
 </div>
 <script type="text/javascript">
-    $('#{{index .options 1| module | domid}}-modal').on('shown.bs.modal', function (e) {
+    $('#{{.name | domid}}_modal').on('shown.bs.modal', function (e) {
         var modal = $(this)
         $.post("/{{index .options 1 | module}}.finder.index", null, function(html){
           modal.find('.modal-body').empty()
@@ -54,7 +54,13 @@
           modal.find('.btn-done').off('click').on('click', function(){
             modal.find(':checkbox').each(function(){
               if ($(this).prop('checked')) {
-                $('#{{index .options 1}}_value').val($(this).val())
+                {{if ge (len .options) 3}}
+                {{if ne (index .options 2) ""}}
+                $('#{{.name | domid}}').val($(this).data().value[{{index .options 2}}])
+                {{end}}
+                {{else}}
+                $('#{{.name | domid}}').val($(this).data().value["id"])
+                {{end}}                
               }
             })
           })

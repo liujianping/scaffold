@@ -87,8 +87,9 @@ func (obj [[.ClassName]]) Validate(v *revel.Validation) {
 //! model query
 type [[.ClassName]]Query struct {
     [[range .table.Columns]]
-    [[if ne (.Tag "query") ""]][[.Field | camel | lint]]    [[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"[[.Tag "query"]]"`[[else if ne (.Tag "find") ""]]
-    [[.Field | camel | lint]]    [[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"[[.Tag "query"]]"`[[end]][[end]]
+    [[if or (eq (.Tag "query") "range") (eq (.Tag "find") "range")]][[.Field | camel | lint]]From    [[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"gt"`
+    [[.Field | camel | lint]]To 	[[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"lt"`
+    [[else if or (ne (.Tag "query") "") (ne (.Tag "find") "")]][[.Field | camel | lint]]		[[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"[[.Tag "query"]]"`[[end]][[end]]
 }
 
 func (obj [[.ClassName]]Query) SQL(query *bsql.QuerySQL) {
