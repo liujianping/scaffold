@@ -86,7 +86,7 @@ func (widget WidgetController) EditorPost() revel.Result {
         if err != nil {
             return widget.RenderJson(WidgetResponse{Code: 405, Message: err.Error()})
         }
-        url = fmt.Sprintf("//%s/%s", QiniuDomain, ret.Key)
+        url = fmt.Sprintf("http://%s/%s", QiniuDomain, ret.Key)
     }
 
     html := fmt.Sprintf("<html><body><script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction(%s, '%s')</script></body></html>",
