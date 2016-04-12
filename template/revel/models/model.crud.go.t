@@ -12,7 +12,7 @@ import (
 var (
 	Default[[.ClassName]]       = [[.ClassName]]{}
 	Default[[.ClassName]]Query  = [[.ClassName]]Query{}
-	Default[[.ClassName]]SortBy = [[.ClassName]]SortBy{1}
+	Default[[.ClassName]]SortBy = [[.ClassName]]SortBy{0}
 	Default[[.ClassName]]Page   = [[.ClassName]]Page{0, DefaultPageSize}
 )
 
@@ -88,6 +88,8 @@ func (obj [[.ClassName]]) Validate(v *revel.Validation) {
 type [[.ClassName]]Query struct {
     [[range .table.Columns]]
     [[if or (eq (.Tag "query") "range") (eq (.Tag "find") "range")]][[.Field | camel | lint]]From    [[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"gt"`
+    [[.Field | camel | lint]]To 	[[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"lt"`
+    [[else if or (eq (.Tag "finder") "range") (eq (.Tag "find") "range")]][[.Field | camel | lint]]From    [[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"gt"`
     [[.Field | camel | lint]]To 	[[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"lt"`
     [[else if or (ne (.Tag "query") "") (ne (.Tag "find") "")]][[.Field | camel | lint]]		[[.Type | convert "mysql"]]     `db:"[[.Field]]"    query:"[[.Tag "query"]]"`[[end]][[end]]
 }
