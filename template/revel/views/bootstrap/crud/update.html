@@ -33,7 +33,13 @@
   </div>
   [[end]]
   [[if eq (.Tag "update") "r"]]
+  [[if eq (.Tag "widget") "datetime"]]
+  <input type="hidden" class="form-control" name="{{$field.Name}}" value="{{$field.Value | datetime}}" >
+  [[else if eq (.Tag "widget") "date"]]
+  <input type="hidden" class="form-control" name="{{$field.Name}}" value="{{$field.Value | date}}" >
+  [[else]]
   <input type="hidden" class="form-control" name="{{$field.Name}}" value="{{$field.Value}}" >
+  [[end]]
   [[end]]
   {{end}}
   [[end]]
