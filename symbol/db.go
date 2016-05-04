@@ -29,7 +29,6 @@ type TypeConvert interface {
 
 type Table struct {
 	name    string
-	rows    int64
 	comment sql.NullString
 	columns []*Column
 }
@@ -50,7 +49,7 @@ func GetAllTables(db *sql.DB) ([]*Table, error) {
 	var tables []*Table
 
 	// table comment
-	rows_tb, err := db.Query(`select table_name, table_rows, table_comment from information_schema.tables where table_schema = DATABASE()`)
+	rows_tb, err := db.Query(`select table_name, table_comment from information_schema.tables where table_schema = DATABASE()`)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +57,7 @@ func GetAllTables(db *sql.DB) ([]*Table, error) {
 
 	for rows_tb.Next() {
 		var table Table
-		if err := rows_tb.Scan(&table.name, &table.rows, &table.comment); err != nil {
+		if err := rows_tb.Scan(&table.name, &table.comment); err != nil {
 			return nil, err
 		}
 
