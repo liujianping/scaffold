@@ -82,4 +82,8 @@ func init() {
 	Extend("convert", Convert)
 	Extend("module", ModuleName)
 	Extend("class", ClassName)
+	Extend("add", Add)
+	Extend("sub", Sub)
+	Extend("divide", Divide)
+	Extend("multiply", Multiply)
 }

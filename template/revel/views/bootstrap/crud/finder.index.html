@@ -25,8 +25,12 @@
         <label>排序</label>
         <select class="form-control" name="{{$field.Name}}" value="{{$field.Flash}}">
           <option value="0">默认排序</option>
-          <option value="1">按时间降序</option>
-          <option value="2">按时间升序</option>
+            [[range $k, $v := .table.Columns]]
+            [[if $v.IsPrimary]]<option value="[[add (multiply 2 $k) 1]]">按[[$v.Tag "caption"]]降序</option> 
+            <option value="[[add (multiply 2 $k) 2]]">按[[$v.Tag "caption"]]升序</option>
+            [[else if eq ($v.Tag "sort") "y"]]<option value="[[add (multiply 2 $k) 1]]">按[[$v.Tag "caption"]]降序</option> 
+            <option value="[[add (multiply 2 $k) 2]]">按[[$v.Tag "caption"]]升序</option>[[end]]
+            [[end]]
         </select>
         {{end}}
         <!-- page -->

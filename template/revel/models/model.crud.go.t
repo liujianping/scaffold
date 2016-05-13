@@ -116,10 +116,16 @@ type [[.ClassName]]SortBy struct {
 func (sortBy [[.ClassName]]SortBy) SQL(query *bsql.QuerySQL) {	
 	t := query.Table(Default[[.ClassName]].TableName())
 	switch sortBy.Value {
-	case 1:
-		query.OrderByDesc(t.Column(Default[[.ClassName]].PrimaryKey()))
-	case 2:
-		query.OrderByAsc(t.Column(Default[[.ClassName]].PrimaryKey()))				
+	[[range $k, $v := .table.Columns]]
+	[[if $v.IsPrimary]]case [[add (multiply 2 $k) 1]]:
+		query.OrderByDesc(t.Column("[[$v.Field]]"))
+	case [[add (multiply 2 $k) 2]]:
+		query.OrderByAsc(t.Column("[[$v.Field]]"))
+	[[else if eq ($v.Tag "sort") "y"]]case [[add (multiply 2 $k) 1]]:
+		query.OrderByDesc(t.Column("[[$v.Field]]"))
+	case [[add (multiply 2 $k) 2]]:
+		query.OrderByAsc(t.Column("[[$v.Field]]"))
+	[[end]][[end]]
 	}
 }
 
