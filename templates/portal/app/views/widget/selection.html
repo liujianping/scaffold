@@ -1,0 +1,21 @@
+{{if eq .mode "r"}}
+    {{range ((index .options 0) | selection)}}
+        {{if eq .OptionValue $.value}}{{raw .OptionName}}{{end}}
+    {{end}}
+{{end}}
+{{if eq .mode "w"}}
+<select name="{{.name}}" class="form-control" value="{{.value}}">
+    <option value="0">所有</option>
+    {{range ((index .options 0) | selection)}}
+        {{if $.value}}
+        {{if eq .OptionValue $.value}}
+        <option value="{{.OptionValue}}" selected>{{raw .OptionName}}</option>
+        {{else}}
+        <option value="{{.OptionValue}}">{{raw .OptionName}}</option>  
+        {{end}}
+        {{else}}
+        <option value="{{.OptionValue}}">{{raw .OptionName}}</option>  
+        {{end}}
+    {{end}}
+</select>
+{{end}}

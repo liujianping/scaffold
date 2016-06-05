@@ -1,0 +1,147 @@
+[[set . "t_module" (.table.Name | module)]]
+
+{{set . "title" "[[.t_module]].index"}}
+{{template "header" .}}
+
+<script type="text/javascript" charset="utf-8">
+  function search(page_no, page_size) {
+    $("#page_no").val(page_no);
+    if (page_size) { $("#page_size").val(page_size); }
+    frm = $("form#search").serialize()
+    $.post("/[[.t_module]].query", frm, function(html){
+      $('#board').empty()
+      $('#board').append(html) 
+    })
+  }
+
+  function create() {
+    window.location.assign("/[[.t_module]].create")
+  }
+  
+  function modify(id) {
+    window.location.assign("/[[.t_module]].update/" + id)
+  }
+  
+  function rm(id) {
+    window.location.assign("/[[.t_module]].remove/" + id)
+  }
+
+  function removes() {
+    if (window.confirm("确认要删除所选项?")) {
+      frm = $("form#search").serialize()
+      $.post("/[[.t_module]].remove", frm, function(html){
+        $('#board').empty()
+        $('#board').append(html) 
+      })  
+    }
+  }
+
+  [[if eq (.table.Tag "import") "y"]]
+  function csv_import() {
+    alert("csv_import")
+  }
+  [[end]]
+  [[if eq (.table.Tag "export") "y"]]
+  function csv_export() {
+    alert("csv_export") 
+  }
+  [[end]]
+
+  function check(elem) {
+    $(":checkbox").prop("checked", $(elem).prop('checked'))
+  }
+ </script>
+
+<div class="container-fluid">
+  <ol class="breadcrumb">
+    <li><a href="/">home</a></li>
+    <li class="active">[[.table.Tag "caption"]]</li>
+  </ol>
+  <form class="form-inline" id="search">
+  <!-- 查询条件开始 -->
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <!-- <form class="form-inline" id="search"> -->
+        <div class="form-group">
+          <!-- query -->
+          [[range .table.Columns]]
+            [[if eq (.Tag "query") "range"]]  
+            <label>[[.Tag "caption"]]</label>
+            {{with $field := field "query.[[.Field | camel | lint]]From" .}}
+              {{widget "[[.Tag "widget"]]" "w" $field.Name  $field.Value "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+            {{end}}
+             - 
+            {{with $field := field "query.[[.Field | camel | lint]]To" .}}
+              {{widget "[[.Tag "widget"]]" "w" $field.Name  $field.Value "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+            {{end}}
+            [[else if ne (.Tag "query") ""]]{{with $field := field "query.[[.Field | camel | lint]]" .}}
+              <label>[[.Tag "caption"]]</label>
+              {{widget "[[.Tag "widget"]]" "w" $field.Name  $field.Value "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+            {{end}}
+            [[end]]
+          [[end]]
+          <!-- sort -->
+          {{with $field := field "sort.Value" .}}
+          <label>排序</label>
+          <select class="form-control" name="{{$field.Name}}" value="{{$field.Flash}}">
+            <option value="0">默认排序</option>
+            [[range $k, $v := .table.Columns]]
+            [[if $v.IsPrimary]]<option value="[[add (multiply 2 $k) 1]]">按[[$v.Tag "caption"]]降序</option> 
+            <option value="[[add (multiply 2 $k) 2]]">按[[$v.Tag "caption"]]升序</option>
+            [[else if eq ($v.Tag "sort") "y"]]<option value="[[add (multiply 2 $k) 1]]">按[[$v.Tag "caption"]]降序</option> 
+            <option value="[[add (multiply 2 $k) 2]]">按[[$v.Tag "caption"]]升序</option>[[end]]
+            [[end]]
+          </select>
+          {{end}}
+          <!-- page -->
+          {{with $field := field "page.No" .}}
+          {{if ne $field.Value ""}}
+          <input type="hidden" id="page_no" name="{{$field.Name}}" value="{{$field.Value}}"/>
+          {{else}}
+          <input type="hidden" id="page_no" name="{{$field.Name}}" value="0"/>
+          {{end}}
+          {{end}}
+          {{with $field := field "page.Size" .}}
+          {{if ne $field.Value ""}}
+          <input type="hidden" id="page_size" name="{{$field.Name}}" value="{{$field.Value}}"/>
+          {{else}}
+          <input type="hidden" id="page_size" name="{{$field.Name}}" value="0"/>
+          {{end}}
+          {{end}}
+          <!-- button -->
+          <button type="button" class="btn btn-default" onclick="search('0');">
+          <span class="glyphicon glyphicon-search" aria-hidden="true"></span>  
+          </button>
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-default" onclick="create();">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>  
+            </button>
+            <button type="button" class="btn btn-default" onclick="removes();">
+            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>  
+            </button>
+          </div>
+          <div class="btn-group" role="group">
+            [[if eq (.table.Tag "import") "y"]]
+            <button type="button" class="btn btn-default" onclick="csv_import();">
+            <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>  
+            </button>
+            [[end]]
+            [[if eq (.table.Tag "export") "y"]]
+            <button type="button" class="btn btn-default" onclick="csv_export();">
+            <span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
+            </button>
+            [[end]]
+          </div>
+        </div> 
+      <!-- </form> -->
+    </div>
+  </div>
+  <!-- 查询条件结束 -->
+
+  <div id="board">
+  {{template "view.[[.t_module]]/query.html" .}}  
+  </div>
+  </form>
+</div>
+
+{{template "footer" .}}

@@ -150,7 +150,10 @@ func Lint(name string) (should string) {
 }
 
 //! "varchar(32)"" to "string"
-func Convert(driver, db_type string) string {
+func Convert(driver, db_type string, gotype string) string {
+	if gotype != "" {
+		return gotype
+	}
 	switch strings.ToLower(driver) {
 	case "mysql":
 		return MySQLConvert{}.Convert(db_type)

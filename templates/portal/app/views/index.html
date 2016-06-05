@@ -1,0 +1,29 @@
+{{set . "title" "index"}}
+{{template "header" .}}
+<div class="container-fluid">
+    <ol class="breadcrumb">
+        <li class="active">home</li>
+    </ol>
+    <div class="panel panel-default">
+        <div class="panel-heading">账号登录</div>
+        <div class="panel-body">
+        <a href="/auth.logout">登出</a>          
+        </div>
+    </div>
+    <!-- 
+    <div class="list-group">
+      <a href="#" class="list-group-item disabled">
+      widget
+      </a>
+      <a href="/widget.index" class="list-group-item">控件</a>
+    </div> -->
+    <div class="list-group">
+      <a href="#" class="list-group-item disabled">
+      index
+      </a>
+      [[range .tables]][[if eq (.Tag "index") "y"]]
+      <a href="/[[.Name | module]].index" class="list-group-item"><span class="badge">{{[[.Name | singular | camel]]Count}}</span>[[.Tag "caption"]]</a>
+      [[end]][[end]]     
+    </div>
+</div>
+{{template "footer" .}}

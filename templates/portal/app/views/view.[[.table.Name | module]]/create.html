@@ -1,0 +1,52 @@
+[[set . "t_module" (.table.Name | module)]]
+{{set . "title" "[[.t_module]].create"}}
+{{template "header" .}}
+
+<div class="container-fluid">
+<ol class="breadcrumb">
+  <li><a href="/">home</a></li>
+  <li><a href="/[[.t_module]].index">[[.table.Tag "caption"]]</a></li>
+  <li class="active">[[.table.Tag "caption"]]_新建</li>
+</ol>
+<div class="panel panel-default">
+  <div class="panel-body" id="board">
+
+  <form class="form-horizontal" action="/[[.t_module]].create" method="POST">
+    <fieldset>
+      <legend class="">[[.t_module]].create</legend>
+    </fieldset>
+    
+    [[range .table.Columns]]
+      [[if not .IsPrimary]]
+        [[if ne (.Tag "ignore") "y"]]
+    {{with $field := field "obj.[[.Field | camel | lint]]" .}}
+    <div class="form-group">
+      <label class="col-sm-2 control-label">[[.Tag "caption"]]</label>
+      <div class="col-sm-6">
+      [[if eq (.Tag "widget") "selection"]]
+      {{widget "[[.Tag "widget"]]"  "w" $field.Name  $field.Value [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "obj.[[.Tag "field" | camel | lint]]"[[end]]}}
+      [[else]]
+      {{widget "[[.Tag "widget"]]"  "w" $field.Name  $field.Value [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+      [[end]]
+      </div>
+      <div class="col-sm-4">
+        <span class="error">{{$field.Error}}</span>
+      </div>
+    </div>
+    {{end}}
+        [[end]]
+      [[end]]
+    [[end]]
+
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-default">确  认</button>
+      </div>
+    </div>
+  </form>
+
+  </div>
+</div>
+</div>
+
+{{template "footer" .}}

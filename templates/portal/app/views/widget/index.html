@@ -1,0 +1,79 @@
+{{set . "title" "widget.index"}}
+{{template "header" .}}
+<div class="container-fluid">
+    <ol class="breadcrumb">
+      <li><a href="/">home</a></li>
+      <li class="active">widget.index</li>
+    </ol>
+    <div class="panel panel-default">
+      <div class="panel-heading">text</div>
+      <div class="panel-body" id="board">
+        <!-- file upload widget start -->
+        {{widget "text" "w" "foo-text" "123456"}}
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">number</div>
+      <div class="panel-body" id="board">
+        <!-- file upload widget start -->
+        {{widget "number" "w" "foo-number" 8}}
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">currency</div>
+      <div class="panel-body" id="board">
+        <!-- file upload widget start -->
+        {{widget "currency" "w" "foo-currency" 8}}
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">password</div>
+      <div class="panel-body" id="board">
+        <!-- file upload widget start -->
+        {{widget "password" "w" "foo-password" "123456"}}
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">email</div>
+      <div class="panel-body" id="board">
+        <!-- file upload widget start -->
+        {{widget "email" "w" "foo-email" "bar@sina.com"}}
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">datetime</div>
+      <div class="panel-body" id="board">
+        <!-- file upload widget start -->
+        {{widget "datetime" "w" "foo-datetime" ""}}
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">finder</div>
+      <div class="panel-body" id="board">
+        <!-- file upload widget start -->
+        {{widget "finder" "w" "foo-finder" "bar" "order"}}
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">file</div>
+      <div class="panel-body" id="board">
+        <!-- file upload widget start -->
+        {{widget "file" "w" "foo-file" "bar"}}
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">textarea</div>
+      <div class="panel-body" id="board">
+        <!-- file upload widget start -->
+        {{widget "textarea" "w" "foo-textarea" "bar"}}
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <div class="panel-heading">unknown</div>
+      <div class="panel-body" id="board">
+        <!-- file upload widget start -->
+        {{widget "unknown" "w" "foo" "bar"}}
+      </div>
+    </div>
+</div>
+{{template "footer" .}}

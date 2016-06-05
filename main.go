@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/liujianping/scaffold/cmd"
+	"github.com/liujianping/scaffold/commands"
 )
 
 func main() {
@@ -14,5 +14,5 @@ func main() {
 		}
 	}()
 
-	cmd.App().Run(os.Args)
+	commands.App().Run(os.Args)
 }

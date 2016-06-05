@@ -1,0 +1,4 @@
+{{if eq .mode "r"}}{{.value}}{{end}}
+{{if eq .mode "w"}}
+<input type="text" class="form-control" name="{{.name}}" value={{.value}}>
+{{end}}

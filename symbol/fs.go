@@ -2,6 +2,7 @@ package symbol
 
 import (
 	"io"
+	"log"
 	"os"
 	"path"
 )
@@ -14,7 +15,11 @@ func IsFileExist(s string) bool {
 	return true
 }
 
-func CopyFile(source string, dest string) (err error) {
+func CopyFile(source string, dest string, force bool) (err error) {
+	if IsFileExist(dest) && force == false {
+		return nil
+	}
+
 	sourcefile, err := os.Open(source)
 	if err != nil {
 		return err
@@ -35,12 +40,13 @@ func CopyFile(source string, dest string) (err error) {
 		if err != nil {
 			err = os.Chmod(dest, sourceinfo.Mode())
 		}
+		log.Println("copy file => ", dest)
 	}
 
 	return
 }
 
-func CopyDir(source string, dest string) (err error) {
+func CopyDir(source string, dest string, force bool) (err error) {
 
 	// get properties of source dir
 	sourceinfo, err := os.Stat(source)
@@ -67,13 +73,13 @@ func CopyDir(source string, dest string) (err error) {
 
 		if obj.IsDir() {
 			// create sub-directories - recursively
-			err = CopyDir(sourcefilepointer, destinationfilepointer)
+			err = CopyDir(sourcefilepointer, destinationfilepointer, force)
 			if err != nil {
 				return err
 			}
 		} else {
 			// perform copy
-			err = CopyFile(sourcefilepointer, destinationfilepointer)
+			err = CopyFile(sourcefilepointer, destinationfilepointer, force)
 			if err != nil {
 				return err
 			}

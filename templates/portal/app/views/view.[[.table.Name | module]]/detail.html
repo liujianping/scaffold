@@ -1,0 +1,34 @@
+[[set . "t_module" (.table.Name | module)]]
+
+{{set . "title" "[[.t_module]].detail"}}
+{{template "header" .}}
+
+<div class="container-fluid">
+  <ol class="breadcrumb">
+  <li><a href="/">home</a></li>
+    <li><a href="/[[.t_module]].index">[[.table.Tag "caption"]]</a></li>
+    <li class="active">[[.table.Tag "caption"]]_详情</li>
+  </ol>
+  <div class="panel panel-default">
+    <div class="panel-body" id="board">
+
+    <fieldset>
+        <legend class="">[[.t_module]].detail</legend>
+    </fieldset>
+    {{with .obj}}
+    <dl class="dl-horizontal">
+      [[range .table.Columns]]
+      [[if ne (.Tag "ignore") "y"]]
+      <dt>[[.Tag "caption"]]</dt>
+      <dd>
+      {{widget "[[.Tag "widget"]]" "r" "[[.Field]]" .[[.Field | camel | lint]] [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+      </dd>
+      [[end]]
+      [[end]]
+    </dl>
+    {{end}}
+    </div>
+  </div>
+</div>
+
+{{template "footer" .}}

@@ -1,0 +1,10 @@
+{{if eq .mode "r"}}{{raw .value}}{{end}}
+{{if eq .mode "w"}}
+<script src="/public/ckeditor/ckeditor.js"></script>
+<textarea name="{{.name}}" id="{{.name | domid}}" rows="10" cols="80">
+{{.value}}
+</textarea>
+<script>
+CKEDITOR.replace('{{.name | domid}}',{filebrowserImageUploadUrl : '/widget.editor'});
+</script>
+{{end}}

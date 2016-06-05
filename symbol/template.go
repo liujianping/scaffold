@@ -1,6 +1,7 @@
 package symbol
 
 import (
+	"bytes"
 	"log"
 	"os"
 	"os/exec"
@@ -24,6 +25,20 @@ var (
 func Template(fpath string) (*template.Template, error) {
 	_, name := path.Split(fpath)
 	return template.New(name).Funcs(extends).Delims(delimeter_begin, delimeter_end).ParseFiles(fpath)
+}
+
+func RenderString(src string, data interface{}) (string, error) {
+	t, err := template.New("str").Funcs(extends).Delims(delimeter_begin, delimeter_end).Parse(src)
+	if err != nil {
+		return "", err
+	}
+
+	b := bytes.NewBufferString("")
+	if err := t.Execute(b, data); err != nil {
+		return "", err
+	}
+
+	return b.String(), nil
 }
 
 func RenderTemplate(src, dest string, data interface{}, force bool) error {
