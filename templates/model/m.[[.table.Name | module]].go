@@ -4,9 +4,10 @@ import (
 	"time"
 )
 
+//! [[.table.Tag "caption"]]
 type [[.t_class]] struct {
 	[[range .table.Columns]]
-	[[.Field | camel | lint]]	[[convert "mysql" .Type (.Tag "gotype")]]	`db:"[[.Field]]"    json:"[[.Field]]"`[[end]]
+	[[.Field | camel | lint]]	[[convert "mysql" .Type (.Tag "gotype")]]	`db:"[[.Field]]"`[[end]]
 }
 
 func (obj [[.t_class]]) TableName() string {

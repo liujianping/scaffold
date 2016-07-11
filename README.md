@@ -31,8 +31,6 @@ CREATE TABLE `users` (
 ````
 如定义表结构后, scaffold 就可以通过 模板函数读取到 comment 中的 caption 字段, 并根据模板生成代码了。
 
-### 它能生成什么?
-
 ### 快速开始
 
 * 安装
@@ -56,7 +54,8 @@ $: scaffold -i=.go -t=model generate -d="database" -u="root" -p="pass" github.co
 [表定义详解](/doc/portal.md)
 
 ````shell
-$: scaffold -i=.go -t=portal generate -d="database" -u="root" -p="pass" github.com/yourname/portal
+$: scaffold -i=.go -i=.html -i=routes -t=portal generate -d="database" -u="root" -p="pass" github.com/yourname/portal
+
 ````
 
 * 自定义模板
