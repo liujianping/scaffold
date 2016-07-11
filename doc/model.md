@@ -3,7 +3,7 @@ model 数据表定义
 
 例子:
 
-````
+````sql
 CREATE TABLE `user_accounts` (
   `id`          INT UNSIGNED     NOT NULL  PRIMARY KEY AUTO_INCREMENT,
   `name`        VARCHAR(32)      NOT NULL  DEFAULT '',
