@@ -51,8 +51,9 @@ $: scaffold -i=.go -t=model generate -d="database" -u="root" -p="pass" github.co
 
 * 生成管理平台
 
-[表定义详解](/doc/portal.md)
 [表定义例子](/doc/portal.sql)
+
+[表定义详解](/doc/portal.md)
 
 ````shell
 # 生成项目
