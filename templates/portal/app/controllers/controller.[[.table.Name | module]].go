@@ -2,6 +2,7 @@ package controllers
 [[set . "t_class" (.table.Name | singular | camel)]]
 [[set . "t_module" (.table.Name | module)]]
 import (
+	"github.com/gocarina/gocsv"
 	models "[[.project]]/app/models"
 	routes "[[.project]]/app/routes"
 	"github.com/revel/revel"
@@ -66,11 +67,16 @@ func (c [[.t_class]]Controller) Detail(id int64) revel.Result {
 	revel.TRACE.Printf("GET >> [[.t_module]].detail ... (%d)", id)
 
 	var obj models.[[.t_class]]
-	db.First(&obj, id)
-	if err := db.Error; err != nil {
+	if err := db.First(&obj, id).Error; err != nil {
 		c.Flash.Error(err.Error())
 		return c.Redirect(routes.[[.t_class]]Controller.Index())
 	}
+
+	[[range .tables]]
+	[[if eq (.Tag "belong") $.table.Name]]    
+	[[if ne (.Tag "many") ""]]
+	db.Model(&obj).Association("[[.Tag "many" | camel | lint]]").Find(&obj.[[.Tag "many" | camel | lint]])
+	[[end]][[end]][[end]]
 
 	c.RenderArgs["obj"] = obj
 	return c.RenderTemplate("view.[[.t_module]]/detail.html")
@@ -92,19 +98,14 @@ func (c [[.t_class]]Controller) CreatePost(obj models.[[.t_class]]) revel.Result
 	}
 
 	tx := db.Begin()
-	tx.Create(&obj)
-	if err := tx.Error; err != nil {
+	if err := tx.Create(models.[[.t_class]]Cipher(&obj)).Error; err != nil {
 		tx.Rollback()
-		c.Flash.Error(err.Error())
+		c.Flash.Error("[[.t_module]] (%d) create failed: (%s)", obj.ID, err.Error())
 		return c.Redirect(routes.[[.t_class]]Controller.Index())
 	}
 	tx.Commit()
 
-	if err := db.Error; err != nil {
-		c.Flash.Error("[[.t_module]] (%d) create failed: (%s)", obj.ID, err.Error())
-	} else {
-		c.Flash.Success("[[.t_module]] (%d) create succeed.", obj.ID)
-	}
+	c.Flash.Success("[[.t_module]] (%d) create succeed.", obj.ID)
 	return c.Redirect(routes.[[.t_class]]Controller.Index())
 }
 
@@ -112,11 +113,16 @@ func (c [[.t_class]]Controller) Update(id int64) revel.Result {
 	revel.TRACE.Printf("GET >> [[.t_module]].update ... (%d)", id)
 
 	var obj models.[[.t_class]]
-	db.First(&obj, id)
-	if err := db.Error; err != nil {
-		c.Flash.Error(err.Error())
+	if err := db.First(&obj, id).Error; err != nil {
+		c.Flash.Error("[[.t_module]] (%d) update failed: (%s)", id, err.Error())
 		return c.Redirect(routes.[[.t_class]]Controller.Index())
 	}
+
+	[[range .tables]]
+	[[if eq (.Tag "belong") $.table.Name]]    
+	[[if ne (.Tag "many") ""]]
+	db.Model(&obj).Association("[[.Tag "many" | camel | lint]]").Find(&obj.[[.Tag "many" | camel | lint]])
+	[[end]][[end]][[end]]
 
 	c.RenderArgs["obj"] = obj
 	return c.RenderTemplate("view.[[.t_module]]/update.html")
@@ -126,14 +132,14 @@ func (c [[.t_class]]Controller) UpdatePost(obj models.[[.t_class]]) revel.Result
 	revel.TRACE.Printf("POST >> [[.t_module]].update ... (%v)", obj)
 
 	tx := db.Begin()
-	tx.Model(&obj).Updates(obj)
+	if err := tx.Model(&obj).Updates(models.[[.t_class]]Cipher(&obj)).Error; err != nil {
+		tx.Rollback()
+		c.Flash.Error("[[.t_module]] (%d) update failed: (%s)", obj.ID, err.Error())
+		return c.Redirect(routes.[[.t_class]]Controller.Index())
+	}
 	tx.Commit()
 
-	if err := db.Error; err != nil {
-		c.Flash.Error("[[.t_module]] (%d) update failed: (%s)", obj.ID, err.Error())
-	} else {
-		c.Flash.Success("[[.t_module]] (%d) update succeed.", obj.ID)
-	}
+	c.Flash.Success("[[.t_module]] (%d) update succeed.", obj.ID)
 	return c.Redirect(routes.[[.t_class]]Controller.Index())
 }
 
@@ -144,14 +150,14 @@ func (c [[.t_class]]Controller) Remove(id int64) revel.Result {
 	obj.ID = id
 
 	tx := db.Begin()
-	tx.Delete(&obj)
+	if err := tx.Delete(&obj).Error; err != nil {
+		tx.Rollback()
+		c.Flash.Error("[[.t_module]] (%d) remove failed: (%s)", id, err.Error())
+		return c.Redirect(routes.[[.t_class]]Controller.Index())
+	}
 	tx.Commit()
 
-	if err := db.Error; err != nil {
-		c.Flash.Error("[[.t_module]] (%d) remove failed: (%s)", id, err.Error())
-	} else {
-		c.Flash.Success("[[.t_module]] (%d) remove succeed.", id)
-	}
+	c.Flash.Success("[[.t_module]] (%d) remove succeed.", id)
 	return c.Redirect(routes.[[.t_class]]Controller.Index())
 }
 
@@ -163,14 +169,14 @@ func (c [[.t_class]]Controller) RemovePost(query models.[[.t_class]]Query,
 		query, sort, page, id)
 
 	tx := db.Begin()
-	tx.Where(id).Delete(models.Default[[.t_class]])
+	if err := tx.Where(id).Delete(models.Default[[.t_class]]).Error; err != nil {
+		tx.Rollback()
+		c.Flash.Error("[[.t_module]] (%v) remove failed: (%s)", id, err.Error())
+		return c.Query(query, sort, page)
+	}
 	tx.Commit()
 
-	if err := db.Error; err != nil {
-		c.Flash.Error("[[.t_module]] (%v) remove failed: (%s)", id, err.Error())
-	} else {
-		c.Flash.Success("[[.t_module]] (%v) remove succeed.", id)
-	}
+	c.Flash.Success("[[.t_module]] (%v) remove succeed.", id)
 	return c.Query(query, sort, page)
 }
 
@@ -218,16 +224,67 @@ func (c [[.t_class]]Controller) FinderQuery(query models.[[.t_class]]Query,
 }
 
 [[if eq (.table.Tag "import") "y"]]
-func (c [[.t_class]]Controller) Import() revel.Result {
+func (c [[.t_class]]Controller) ImportPost() revel.Result {
 	revel.INFO.Printf("POST >> [[.t_module]].import ...")
-	return c.Redirect(routes.[[.t_class]]Controller.Index())
+	
+	c.Validation.Required(c.Params.Files["upload"])
+	if c.Validation.HasErrors() {
+		return c.RenderJson(WidgetResponse{Code: 401, Message: "files absent"})
+	}
+
+	upload_file := c.Params.Files["upload"][0]
+	fd, err := upload_file.Open()
+	if err != nil {
+		return c.RenderJson(WidgetResponse{Code: 402, Message: err.Error()})
+	}
+	defer fd.Close()
+
+	items := []*models.[[.t_class]]{}
+	if err := gocsv.Unmarshal(fd, &items); err != nil {
+		return c.RenderJson(WidgetResponse{Code: 403, Message: err.Error()})
+	}
+
+	tx := db.Begin()
+	for _, item := range items {
+		if err := tx.Create(item).Error; err != nil {
+			tx.Rollback()
+			return c.RenderJson(WidgetResponse{Code: 405, Message: err.Error()})
+		}
+	}
+	tx.Commit()
+
+	return c.RenderJson(WidgetResponse{Code: 0, Message: fmt.Sprintf("[[.t_module]] %d imported", len(items))})
 }
 [[end]]
 
 [[if eq (.table.Tag "export") "y"]]
-func (c [[.t_class]]Controller) Export() revel.Result {
+func (c [[.t_class]]Controller) ExportPost(query models.[[.t_class]]Query) revel.Result {
 	revel.INFO.Printf("POST >> [[.t_module]].export ...")
-	return c.Redirect(routes.[[.t_class]]Controller.Index())
+
+	items, err := models.Default[[.t_class]].Export(db, query)
+	if err != nil {
+		c.Flash.Error(err.Error())
+		return c.RenderTemplate("view.[[.t_module]]/query.html")
+	}
+
+	bio := bytes.NewBuffer([]byte{})
+	if err := gocsv.Marshal(items, bio); err != nil {
+		c.Flash.Error(err.Error())
+		return c.RenderTemplate("view.[[.t_module]]/query.html")
+	}
+
+	url, err := Upload(fmt.Sprintf("[[.t_module]].%s.csv", time.Now().Format("20060102150405")), bio)
+	if err != nil {
+		return c.RenderJson(map[string]interface{}{
+			"code":  405,
+			"error": err.Error(),
+		})
+	}
+
+	return c.RenderJson(map[string]interface{}{
+		"code": 0,
+		"url":  url,
+	})
 }
 [[end]]
 
@@ -235,6 +292,11 @@ func [[.t_class]]Count() int64 {
 	return models.Default[[.t_class]].Count(db)
 }
 
+func [[.t_class]]Field(field string, id int64) interface{} {
+	return models.[[.t_class]]Field(db, field, id)
+}
+
 func init() {
 	revel.TemplateFuncs["[[.t_class]]Count"] = [[.t_class]]Count
+	revel.TemplateFuncs["[[.t_class]]Field"] = [[.t_class]]Field
 }

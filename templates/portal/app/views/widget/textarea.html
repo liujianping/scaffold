@@ -1,4 +1,4 @@
-{{if eq .mode "r"}}{{raw .value}}{{end}}
+{{if eq .mode "r"}}{{.value | javascript_escape | raw}}{{end}}
 {{if eq .mode "w"}}
 <script src="/public/ckeditor/ckeditor.js"></script>
 <textarea name="{{.name}}" id="{{.name | domid}}" rows="10" cols="80">

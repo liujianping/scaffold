@@ -7,7 +7,9 @@
     <div class="panel panel-default">
         <div class="panel-heading">账号登录</div>
         <div class="panel-body">
-        <a href="/auth.logout">登出</a>          
+        <h6>欢迎您, {{.account.Name}}<small>({{.account.Mailbox}})</small></h6>
+        <a href="/auth.password">修改密码</a>
+        <a href="/auth.logout">登出</a>            
         </div>
     </div>
     <!-- 

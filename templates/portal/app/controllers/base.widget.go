@@ -2,14 +2,9 @@ package controllers
 
 import (
 	"fmt"
-	goio "io"
-	"os"
-	"path"
-	"time"
 
-	cf "github.com/qiniu/api.v6/conf"
-	io "github.com/qiniu/api.v6/io"
-	rs "github.com/qiniu/api.v6/rs"
+	"[[.project]]/app/models"
+	"github.com/liujianping/scaffold/symbol"
 	"github.com/revel/revel"
 )
 
@@ -60,33 +55,9 @@ func (widget WidgetController) EditorPost() revel.Result {
 	}
 	defer fd.Close()
 
-	var url string
-	if !QiniuEnable {
-		sub := fmt.Sprintf("%d", time.Now().Unix()%31)
-		dir := path.Join(revel.BasePath, "upload", sub)
-		os.MkdirAll(dir, os.ModePerm)
-
-		wr, err := os.Create(path.Join(dir, fname))
-		if err != nil {
-			return widget.RenderJson(WidgetResponse{Code: 402, Message: err.Error()})
-		}
-		defer wr.Close()
-
-		if _, err := goio.Copy(wr, fd); err != nil {
-			return widget.RenderJson(WidgetResponse{Code: 403, Message: err.Error()})
-		}
-
-		url = fmt.Sprintf("/upload/%s/%s", sub, fname)
-	} else {
-		var ret io.PutRet
-		var extra = &io.PutExtra{}
-
-		uptoken := QiniuToken(QiniuBucket)
-		err = io.PutWithoutKey(nil, &ret, uptoken, fd, extra)
-		if err != nil {
-			return widget.RenderJson(WidgetResponse{Code: 405, Message: err.Error()})
-		}
-		url = fmt.Sprintf("http://%s/%s", QiniuDomain, ret.Key)
+	url, err := Upload(fname, fd)
+	if err != nil {
+		return widget.RenderJson(WidgetResponse{Code: 405, Message: err.Error()})
 	}
 
 	html := fmt.Sprintf("<html><body><script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction(%s, '%s')</script></body></html>",
@@ -120,73 +91,105 @@ func (widget WidgetController) UploadPost() revel.Result {
 	}
 	defer fd.Close()
 
-	var url string
-	if !QiniuEnable {
-		sub := fmt.Sprintf("%d", time.Now().Unix()%31)
-		dir := path.Join(revel.BasePath, "upload", sub)
-		os.MkdirAll(dir, os.ModePerm)
-
-		wr, err := os.Create(path.Join(dir, fname))
-		if err != nil {
-			return widget.RenderJson(WidgetResponse{Code: 402, Message: err.Error()})
-		}
-		defer wr.Close()
-
-		if _, err := goio.Copy(wr, fd); err != nil {
-			return widget.RenderJson(WidgetResponse{Code: 403, Message: err.Error()})
-		}
-
-		url = fmt.Sprintf("/upload/%s/%s", sub, fname)
-	} else {
-		var ret io.PutRet
-		var extra = &io.PutExtra{}
-
-		uptoken := QiniuToken(QiniuBucket)
-		err = io.PutWithoutKey(nil, &ret, uptoken, fd, extra)
-		if err != nil {
-			return widget.RenderJson(WidgetResponse{Code: 405, Message: err.Error()})
-		}
-		url = fmt.Sprintf("http://%s/%s", QiniuDomain, ret.Key)
+	url, err := Upload(fname, fd)
+	if err != nil {
+		return widget.RenderJson(WidgetResponse{Code: 403, Message: err.Error()})
 	}
-
+	revel.INFO.Printf("POST >> widget.upload file (url:%s) completed.", url)
 	return widget.RenderJson(WidgetResponse{Code: 0, Data: map[string]interface{}{
 		"url": url,
 	}})
 }
 
-func QiniuToken(bucket string) string {
-	putPolicy := rs.PutPolicy{
-		Scope: bucket,
-		//CallbackUrl: callbackUrl,
-		//CallbackBody:callbackBody,
-		//ReturnUrl:   returnUrl,
-		//ReturnBody:  returnBody,
-		//AsyncOps:    asyncOps,
-		//EndUser:     endUser,
-		//Expires:     expires,
+func (widget WidgetController) SystemOptionPost(code, relate_code string) revel.Result {
+	revel.TRACE.Printf("POST >> widget.system.option ...")
+
+	var options []models.SystemOption
+	if err := db.Where("code = ? and relate_code = ?", code, relate_code).Order("id ASC").Find(&options).Error; err != nil {
+		return widget.RenderJson(WidgetResponse{Code: 401, Message: err.Error()})
 	}
-	return putPolicy.Token(nil)
+
+	return widget.RenderJson(WidgetResponse{Code: 0, Data: map[string]interface{}{
+		"options": options,
+	}})
 }
 
-var (
-	QiniuEnable bool
-	QiniuAccess string
-	QiniuSecret string
-	QiniuBucket string
-	QiniuDomain string
-)
-
-func InitWidget() {
-	QiniuEnable = revel.Config.BoolDefault("qiniu.enable", false)
-	QiniuAccess = revel.Config.StringDefault("qiniu.access", "")
-	QiniuSecret = revel.Config.StringDefault("qiniu.secret", "")
-	QiniuBucket = revel.Config.StringDefault("qiniu.bucket", "")
-	QiniuDomain = revel.Config.StringDefault("qiniu.domain", "")
-
-	cf.ACCESS_KEY = QiniuAccess
-	cf.SECRET_KEY = QiniuSecret
+func (widget WidgetController) TableObjectPost(table string, id int64) revel.Result {
+	revel.TRACE.Printf("POST >> widget.table.object ...")
+	obj := GetTableObject(table, id)
+	if obj == nil {
+		return widget.RenderJson(WidgetResponse{Code: 404, Message: "object no exist."})
+	}
+	return widget.RenderJson(WidgetResponse{Code: 0, Data: obj})
 }
 
-func init() {
-	revel.OnAppStart(InitWidget)
+func (widget WidgetController) ManyCreatePost() revel.Result {
+	revel.TRACE.Printf("POST >> widget.many.create ...")
+
+	var relation, belong, many string
+	var belong_id int64
+	var manies []int64
+
+	widget.Params.Bind(&relation, "relation")
+	widget.Params.Bind(&belong, "belong")
+	widget.Params.Bind(&many, "many")
+	widget.Params.Bind(&belong_id, "belong_id")
+	widget.Params.Bind(&manies, "manies")
+
+	revel.INFO.Printf("POST >> widget.many.create ... manies:%v", manies)
+	tx := db.Begin()
+	if relation != many {
+		for _, many_id := range manies {
+			sql := fmt.Sprintf("INSERT INTO %s(%s_id, %s_id) VALUES(?, ?)", 
+				   relation, symbol.Singular(belong), symbol.Singular(many))
+			if err := tx.Exec(sql, belong_id, many_id).Error; err != nil {
+				tx.Rollback()
+				return widget.RenderJson(WidgetResponse{Code: 401, Message: err.Error()})
+			}
+		}
+	}
+	tx.Commit()
+
+	return widget.RenderJson(WidgetResponse{Code: 0, Message: "ok"})
+}
+
+func (widget WidgetController) ManyRemovePost() revel.Result {
+	revel.TRACE.Printf("POST >> widget.many.remove ...")
+
+	var relation, belong, many string
+	var belong_id int64
+	var manies []int64
+
+	widget.Params.Bind(&relation, "relation")
+	widget.Params.Bind(&belong, "belong")
+	widget.Params.Bind(&many, "many")
+	widget.Params.Bind(&belong_id, "belong_id")
+	widget.Params.Bind(&manies, "manies")
+
+	revel.INFO.Printf("POST >> widget.many.remove ... manies:%v", manies)
+
+	obj := models.DefaultTableObject(relation)
+	tx := db.Begin()
+	if relation != many {
+		conditon := fmt.Sprintf("%s_id = ? and %s_id = ?", symbol.Singular(many), symbol.Singular(belong))	
+		for _, many_id := range manies {
+			if err := tx.Where(conditon, many_id, belong_id).Delete(obj).Error; err != nil {
+				tx.Rollback()
+				return widget.RenderJson(WidgetResponse{Code: 401, Message: err.Error()})
+			}
+		}
+	} else {
+		if err := tx.Where(manies).Delete(obj).Error; err != nil {
+			tx.Rollback()
+			return widget.RenderJson(WidgetResponse{Code: 401, Message: err.Error()})
+		}
+	}
+	tx.Commit()
+
+	return widget.RenderJson(WidgetResponse{Code: 0, Message: "ok"})
+}
+
+func (widget WidgetController) ManyAppendPost() revel.Result {
+	revel.TRACE.Printf("POST >> widget.many.append ...")
+	return widget.RenderJson(WidgetResponse{Code: 0, Message: "ok"})
 }

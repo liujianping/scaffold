@@ -30,13 +30,15 @@
         [[end]][[end]]
       </thead>
       <tbody>
-          {{range .items}}
+          {{range $k, $v := .items}}
           <tr>
             [[with .table.PrimaryColumn]]
-            <td>{{widget "checkbox" "w" "id" (json .)}}</td>
+            <td>{{widget "checkbox" "w" "id[]" (json .)}}</td>
             [[end]]
             [[range .table.Columns]][[if eq (.Tag "column") "y"]]
-            <td>{{widget "[[.Tag "widget"]]" "r" "[[.Field]]"  .[[.Field | camel | lint]] [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}</td>
+            <td>
+            {{widget "[[.Tag "widget"]]" "r" (printf "finder.query.[[.Field]].%d" $k)  $v.[[.Field | camel | lint]] [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+            </td>
             [[end]][[end]]
           </tr>
           {{end}}

@@ -8,7 +8,11 @@
           [[range .table.Columns]]
             [[if .IsPrimary]]{{with $field := field "query.[[.Field | camel | lint]]" .}}
               <label>[[.Tag "caption"]]</label>
-              {{widget "[[.Tag "widget"]]" "w" $field.Name  $field.Value "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+              [[if eq (.Tag "widget") "selection"]]
+              {{widget "[[.Tag "widget"]]"  "w" $field.Name  $field.Value [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "query.[[.Tag "field" | camel | lint]]"[[end]]}}
+              [[else]]
+              {{widget "[[.Tag "widget"]]"  "w" $field.Name  $field.Value [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+              [[end]]
               {{end}}
             [[else]]
               [[if eq (.Tag "query") "range"]]  
@@ -22,7 +26,11 @@
               {{end}}
               [[else if ne (.Tag "query") ""]]{{with $field := field "query.[[.Field | camel | lint]]" .}}
                 <label>[[.Tag "caption"]]</label>
-                {{widget "[[.Tag "widget"]]" "w" $field.Name  $field.Value "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+                [[if eq (.Tag "widget") "selection"]]
+                {{widget "[[.Tag "widget"]]"  "w" $field.Name  $field.Value [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "query.[[.Tag "field" | camel | lint]]"[[end]]}}
+                [[else]]
+                {{widget "[[.Tag "widget"]]"  "w" $field.Name  $field.Value [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+                [[end]]
               {{end}}
               [[end]]
             [[end]]

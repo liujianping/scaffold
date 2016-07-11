@@ -36,14 +36,16 @@
     }
   }
 
-  [[if eq (.table.Tag "import") "y"]]
-  function csv_import() {
-    alert("csv_import")
-  }
-  [[end]]
   [[if eq (.table.Tag "export") "y"]]
   function csv_export() {
-    alert("csv_export") 
+    frm = $("form#search").serialize()
+    $.post("/[[.t_module]].export", frm, function(json){
+      if (json.code == 0) {
+        window.location.assign(json.url)  
+      } else {
+        alert("导出失败:" + json.error)
+      }
+    })
   }
   [[end]]
 
@@ -68,7 +70,11 @@
             [[if eq (.Tag "query") "range"]]  
             <label>[[.Tag "caption"]]</label>
             {{with $field := field "query.[[.Field | camel | lint]]From" .}}
-              {{widget "[[.Tag "widget"]]" "w" $field.Name  $field.Value "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+              [[if eq (.Tag "widget") "selection"]]
+              {{widget "[[.Tag "widget"]]"  "w" $field.Name  $field.Value [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "query.[[.Tag "field" | camel | lint]]"[[end]]}}
+              [[else]]
+              {{widget "[[.Tag "widget"]]"  "w" $field.Name  $field.Value [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+              [[end]]
             {{end}}
              - 
             {{with $field := field "query.[[.Field | camel | lint]]To" .}}
@@ -76,7 +82,11 @@
             {{end}}
             [[else if ne (.Tag "query") ""]]{{with $field := field "query.[[.Field | camel | lint]]" .}}
               <label>[[.Tag "caption"]]</label>
-              {{widget "[[.Tag "widget"]]" "w" $field.Name  $field.Value "[[.Tag "relation"]]"[[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+              [[if eq (.Tag "widget") "selection"]]
+              {{widget "[[.Tag "widget"]]"  "w" $field.Name  $field.Value [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "query.[[.Tag "field" | camel | lint]]"[[end]]}}
+              [[else]]
+              {{widget "[[.Tag "widget"]]"  "w" $field.Name  $field.Value [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+              [[end]]
             {{end}}
             [[end]]
           [[end]]
@@ -122,9 +132,65 @@
           </div>
           <div class="btn-group" role="group">
             [[if eq (.table.Tag "import") "y"]]
-            <button type="button" class="btn btn-default" onclick="csv_import();">
+            <button type="button" class="btn btn-default"  data-toggle="modal" data-target="#[[.t_module]]_import_modal">
             <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>  
             </button>
+            <!-- modal start-->
+            <div id="[[.t_module]]_import_modal" class="modal fade" role="dialog">
+              <div class="modal-dialog modal-lg">
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">[[.t_module]].import</h4>
+                  </div>
+                  <div class="modal-body">
+                  <form id="import" class="form-horizontal">
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label">选择文件:</label>
+                      <div class="col-sm-6">
+                      <input type="file" name="upload" id="upload">
+                      </div>
+                    </div>
+                  </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-success btn-done" data-dismiss="modal">导入</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- modal end-->
+            <!-- modal script begin-->
+            <script type="text/javascript">
+              $('#[[.t_module]]_import_modal').on('shown.bs.modal', function (e) {
+                var modal = $(this)
+                modal.find('.btn-done').off('click').on('click', function(){
+                  var formData = new FormData();
+                  formData.append("upload", $("#upload")[0].files[0]);
+                  $.ajax({  
+                      url : "/[[.t_module]].import",  
+                      type : 'POST',  
+                      data : formData,  
+                      processData : false,  
+                      contentType : false,  
+                      success : function(json) {  
+                        if (json.code == 0) {
+                          alert("导入成功:" + json.message)
+                          window.location.assign("/[[.t_module]].index")
+                        } else {
+                          alert("导入失败:" + json.message)
+                        }
+                      },  
+                      error : function(responseStr) {  
+                          alert("失败:" + JSON.stringify(responseStr));//将    json对象    转成    json字符串。  
+                      }  
+                  });
+                })
+              })  
+            </script>
+            <!-- modal script end-->
             [[end]]
             [[if eq (.table.Tag "export") "y"]]
             <button type="button" class="btn btn-default" onclick="csv_export();">

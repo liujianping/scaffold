@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"net"
+
+	"[[.project]]/app/models"
 	"[[.project]]/app/routes"
 	"github.com/revel/revel"
 )
@@ -15,30 +18,25 @@ func (c PortalController) Index() revel.Result {
 
 func (c PortalController) authorized() (interface{}, bool) {
 	if secret, ok := c.Session["secret"]; ok {
-		return secret, true
-		// remote, _, _ := net.SplitHostPort(c.Request.RemoteAddr)
-		// forward := c.Request.Header.Get("X-Forwarded-For")
-		// if forward != "" {
-		// 	remote = forward
-		// }
-		// token, err := business.AuthTokenHit(db, secret, remote)
-		// if err != nil {
-		// 	revel.TRACE.Printf("token (%s) hit failed:(%s)", secret, err.Error())
-		// 	return nil
-		// }
+		remote, _, _ := net.SplitHostPort(c.Request.RemoteAddr)
+		forward := c.Request.Header.Get("X-Forwarded-For")
+		if forward != "" {
+			remote = forward
+		}
 
-		// if token == nil {
-		// 	revel.TRACE.Printf("token (%s) hit invalid.", secret)
-		// 	return nil
-		// }
+		token, err := HitSystemToken(secret, remote)
+		if err != nil {
+			revel.WARN.Printf("authorized failed: %s", err.Error())
+			return nil, false
+		}
 
-		// obj, err := db.Get(models.PortalAccount{}, token.AuthID)
-		// if err != nil {
-		// 	return nil
-		// }
-
-		// c.RenderArgs["account"] = obj.(*models.PortalAccount)
-		// return obj.(*models.PortalAccount)
+		var account models.SystemAccount
+		account.ID = token.SystemAccountID
+		if err := db.First(&account).Error; err != nil {
+			return nil, false
+		}
+		c.RenderArgs["account"] = &account
+		return &token, true
 	}
 
 	return nil, false

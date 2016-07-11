@@ -1,0 +1,211 @@
+[[set . "t_module" (.table.Name | module)]]
+[[set . "t_class" (.table.Name | class)]]
+<!-- 表格列表 开始 -->
+<script type="text/javascript">
+function check(elem) {
+  $(":checkbox").prop("checked", $(elem).prop('checked'))
+}
+function create_relation(manies){
+  data = {
+    "relation": "{{.relation}}",
+    "belong": "{{.belong}}",
+    "many": "{{.many}}",
+    "belong_id": {{.id}},
+    "manies": manies,
+  }
+  $.post("/widget.many.create", data, function(json) {
+    if (json.code == 0) {
+      window.location.assign("/{{.belong | module}}.update/" + {{.id}})
+    }
+  })
+}
+function remove_relation(){
+  var manies = new Array()
+  $("tbody").find(':checkbox').each(function(){
+    if (this.checked) {
+      manies.push(this.value)
+    }
+  })
+  data = {
+    "relation": "{{.relation}}",
+    "belong": "{{.belong}}",
+    "many": "{{.many}}",
+    "belong_id": {{.id}},
+    "manies": manies,
+  }
+  $.post("/widget.many.remove", data, function(json) {
+    if (json.code == 0) {
+      window.location.assign("/{{.belong | module}}.update/" + {{.id}})
+    }
+  })
+}
+function remove_one(many_id){
+  var manies = new Array()
+  manies.push(many_id)
+  data = {
+    "relation": "{{.relation}}",
+    "belong": "{{.belong}}",
+    "many": "{{.many}}",
+    "belong_id": {{.id}},
+    "manies": manies,
+  }
+  $.post("/widget.many.remove", data, function(json) {
+    if (json.code == 0) {
+      window.location.assign("/{{.belong | module}}.update/" + {{.id}})
+    }
+  })
+}
+
+</script>
+<div class="panel panel-default">
+  <div class="panel-body">
+  {{if eq $.mode "w"}}
+  <div class="btn-group" role="group">
+  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#{{.many | domid}}_modal">
+  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>  
+  </button>
+  <button type="button" class="btn btn-default" onclick="remove_relation({{$.id}});">
+  <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>  
+  </button>
+  <!-- modal start-->
+  <div id="{{.many | domid}}_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">{{.many | module}}.create</h4>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-success btn-done" data-dismiss="modal">选择</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- modal end-->
+  <script type="text/javascript">
+    $('#{{.many | domid}}_modal').on('shown.bs.modal', function (e) {
+        var modal = $(this)
+        if ("{{.relation}}" != "{{.many}}") {
+          $.post("/{{.many | module}}.finder.index", null, function(html){
+            modal.find('.modal-body').empty()
+            modal.find('.modal-body').append(html)
+
+            modal.find('#finder_search').off('click').on('click', function(){
+              searchit(modal,$(this))
+            })
+
+            modal.find('#finder_checkbox').off('click').on('click', function(){
+              checkit(modal, $(this))
+            })
+
+            modal.find('.btn-done').off('click').on('click', function(){
+              modal.find(':checkbox').each(function(){
+                if ($(this).prop('checked') && $(this).attr('id') != "finder_checkbox") {
+                  var manies = new Array()
+                  manies.push($(this).data().value["id"])
+                  create_relation(manies)
+                }
+              })
+            })
+
+            modal.find('a#page').off('click').on('click', function(){
+              pagination(modal,$(this))
+            })
+          })
+
+          function searchit(modal, self){
+            modal.find('#page_no').val('0')
+            frm = modal.find("form#finder_query").serialize()
+            $.post("/{{.many | module}}.finder.query", frm, function(html){
+              modal.find('#finder_board').empty()
+              modal.find('#finder_board').append(html)
+              modal.find('a#page').off('click').on('click', function(){
+                pagination(modal,$(this))
+              })
+              modal.find('#finder_checkbox').off('click').on('click', function(){
+                checkit(modal, $(this))
+              }) 
+            })
+          }
+
+          function checkit(modal, self){
+            modal.find(":checkbox").prop("checked", self.prop('checked'))
+          }
+
+          function pagination(modal,self){
+            modal.find('#page_size').val(modal.find('#{{.many | module | domid}}-pagination').data("value"))
+            modal.find('#page_no').val(self.data("value"))
+            frm = modal.find("form#finder_query").serialize()
+            $.post("/{{.many | module}}.finder.query", frm, function(html){
+              modal.find('#finder_board').empty()
+              modal.find('#finder_board').append(html)
+              modal.find('a#page').off('click').on('click', function(){
+                pagination(modal,$(this))
+              })
+              modal.find('#finder_checkbox').off('click').on('click', function(){
+                checkit(modal, $(this))
+              })              
+            })
+          }
+        } else {// relation 
+          modal.modal('hide')
+          window.open("/{{.many | module}}.create")
+        }       
+    })
+  </script>
+  </div>  
+  {{end}}
+  {{if not .value}}
+  {{if eq $.mode "r"}}
+  <p>暂无有效记录。</p>
+  {{end}}
+  {{else}}
+  <table class="table table-hover">
+      <thead>
+        <th><input type="checkbox" onclick="check(this)"></th>
+        <th>[[.table.PrimaryColumn.Tag "caption"]]</th>
+        [[range .table.Columns]][[if eq (.Tag "column") "y"]]<th>[[.Tag "caption"]]</th>
+        [[end]][[end]]
+        {{if eq $.mode "w"}}
+        <th>操作</th>
+        {{end}}
+      </thead>
+      <tbody>
+          {{range $k, $v := .value}}
+          <tr>
+            [[with .table.PrimaryColumn]]
+            <td>{{widget "checkbox"  "w" "[[.Field]][]" .[[.Field | camel | lint]] [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+            </td>
+            <td>
+            <a href='/[[$.table.Name | module]].detail/{{.[[.Field | camel | lint]]}}'>
+            {{$v.[[.Field | camel | lint]]}}
+            </a>
+            </td>
+            [[end]]
+            [[range .table.Columns]][[if eq (.Tag "column") "y"]]
+            <td>
+            {{widget "[[.Tag "widget"]]" "r" (printf "%s.[[.Field]].%d" $.relation $k) $v.[[.Field | camel | lint]] [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+            </td>
+            [[end]][[end]]
+            
+            {{if eq $.mode "w"}}
+            <td>
+            <div class="btn-group btn-group-xs" role="group">
+            <button type="button" class="btn btn-default" onclick="remove_one({{$v.ID}});">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  
+            </button>  
+            </div>
+            </td>
+            {{end}}
+          </tr>
+          {{end}}
+      </tbody>      
+  </table>
+  {{end}}
+  
+  </div>
+</div>

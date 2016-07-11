@@ -18,7 +18,38 @@ var (
 
 type [[.t_class]] struct {
 	[[range .table.Columns]]
-    [[.Field | camel | lint]]	[[convert "mysql" .Type (.Tag "gotype")]]	`db:"[[.Field]]"    json:"[[.Field]]"`[[end]]
+	[[if eq (.Tag "csv") "y"]][[.Field | camel | lint]]	[[convert "mysql" .Type (.Tag "gotype")]]	`db:"[[.Field]]"    json:"[[.Field]]"    csv:"[[.Tag "caption"]]"`
+    [[else]][[.Field | camel | lint]]	[[convert "mysql" .Type (.Tag "gotype")]]	`db:"[[.Field]]"    json:"[[.Field]]"    csv:"-"`[[end]][[end]]
+    [[range .tables]]
+	[[if eq (.Tag "belong") $.table.Name]]    
+	[[if eq (.Tag "many") .Name]]
+    [[.Tag "many" | camel | lint]]	[][[.Tag "many" | singular | camel]]	`db:"-"    json:"[[.Tag "many"]]"    csv:"-"`
+	[[else]]
+ 	[[.Tag "many" | camel | lint]]	[][[.Tag "many" | singular | camel]]	`db:"-"    json:"[[.Tag "many"]]"    csv:"-"    gorm:"many2many:[[.Name]];"`
+    [[end]][[end]][[end]]
+}
+
+func [[.t_class]]Cipher(obj *[[.t_class]]) *[[.t_class]] {[[range .table.Columns]]
+	[[if ne (.Tag "cipher") ""]]obj.[[.Field | camel | lint]] = cipher_[[.Tag "cipher"]](obj.[[.Field | camel | lint]])
+	[[end]][[end]]
+	return obj
+}
+
+func [[.t_class]]Field(db *gorm.DB, field string, id int64) interface{} {
+	var obj [[.t_class]]
+	if err := db.First(&obj, id).Error; err != nil {
+		return err
+	}
+
+	t := reflect.TypeOf(obj)
+	v := reflect.ValueOf(obj)
+	for i := 0; i < t.NumField(); i++ {
+		tag := t.Field(i).Tag
+		if tag.Get("db") == field {
+			return v.Field(i).Interface()
+		}
+	}
+	return "null"
 }
 
 func (obj [[.t_class]]) TableName() string {
@@ -44,6 +75,15 @@ func (obj [[.t_class]]) Search(db *gorm.DB,
 	search = query.Query(search)
 	search.Count(&total)
 	search = page.Page(sort.Sort(search))
+	search.Find(&results)
+	err = search.Error
+	return
+}
+
+func (obj [[.t_class]]) Export(db *gorm.DB,
+	query [[.t_class]]Query) (results [][[.t_class]], err error) {
+	search := db.Model(&obj).Select(Columns(obj))
+	search = query.Query(search)
 	search.Find(&results)
 	err = search.Error
 	return

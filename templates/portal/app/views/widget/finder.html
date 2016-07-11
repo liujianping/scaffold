@@ -1,19 +1,44 @@
-{{if eq .mode "r"}}
-{{if .value}}
-<a href="/{{index .options 0 | module}}.detail/{{.value}}">{{.value}}</a>
+{{set . "relation" (index .options 0)}}
+{{if ge (len .options) 2}}
+{{set . "field" (index .options 1)}}
 {{else}}
-暂无  
+{{set . "field" "id"}}
 {{end}}
-
+{{if eq .mode "r"}}
+<a id="{{.name | domid}}_{{.value}}" href="/{{index .options 0 | module}}.detail/{{.value}}"></a>
+<script type="text/javascript">
+  data = {
+    "table": "{{.relation}}",
+    "id": {{.value}},
+  }
+  $.post('/widget.table.object', data, function(json){
+    if (json.code == 0) {
+      $('#{{.name | domid}}_{{.value}}').text(json.data[{{.field}}])    
+    }
+  })
+</script>
 {{end}}
 {{if eq .mode "w"}}
 <div class="input-group">
-  <input type="text"  class="form-control" id="{{.name | domid}}" name="{{.name}}" value={{.value}}>
+  <input type="hidden"  class="form-control" id="{{.name | domid}}" name="{{.name}}" value={{.value}}>
+  <input type="text"  class="form-control" id="{{.name | domid}}_{{.field}}" value="{{.value}}">
   <span class="input-group-btn">
     <button class="btn btn-default" type="button" data-toggle="modal" data-target="#{{.name | domid}}_modal">
     查找
     </button>
   </span>
+  <script type="text/javascript">
+  data = {
+    "table": "{{.relation}}",
+    "id": {{.value}},
+  }
+  $.post('/widget.table.object', data, function(json){
+    if (json.code == 0) {
+      $('#{{.name | domid}}').val(json.data["id"])    
+      $('#{{.name | domid}}_{{.field}}').val(json.data[{{.field}}])    
+    }
+  })
+  </script>
 </div>
 
 <!-- Modal -->
@@ -53,10 +78,11 @@
 
           modal.find('.btn-done').off('click').on('click', function(){
             modal.find(':checkbox').each(function(){
-              if ($(this).prop('checked')) {
+              if ($(this).prop('checked') && $(this).attr('id') != "finder_checkbox") {
                 {{if ge (len .options) 2}}
                 {{if ne (index .options 1) ""}}
-                $('#{{.name | domid}}').val($(this).data().value[{{index .options 1}}])
+                $('#{{.name | domid}}_{{.field}}').val($(this).data().value[{{.field}}])
+                $('#{{.name | domid}}').val($(this).data().value["id"])
                 {{end}}
                 {{else}}
                 $('#{{.name | domid}}').val($(this).data().value["id"])

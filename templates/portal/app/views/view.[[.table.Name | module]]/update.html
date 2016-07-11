@@ -41,6 +41,21 @@
     [[end]]
   [[end]]
 
+  [[range .tables]]
+  [[if eq (.Tag "belong") $.table.Name]]
+  <div class="form-group">
+  <label class="col-sm-2 control-label">[[.Tag "caption"]]</label>
+  <div class="col-sm-6">
+  [[if ne (.Tag "many") ""]]
+  {{many "[[.Tag "belong"]]" "[[.Tag "many"]]"  "[[.Name]]" "w" .obj.ID .obj.[[.Tag "many" | camel | lint]]}}
+  [[end]]
+  </div>
+      <div class="col-sm-4">
+      </div>
+  </div>
+  [[end]]
+  [[end]]
+
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
       <button type="submit" class="btn btn-default">确  认</button>

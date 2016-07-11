@@ -31,17 +31,17 @@ func App() *cli.App {
 		cli.StringFlag{
 			Name:  "template-folder",
 			Value: "",
-			Usage: "template abosolute folder path",
+			Usage: "custom template abosolute folder path",
 		},
 		cli.StringSliceFlag{
-			Name:  "template-suffix, s",
+			Name:  "include-template-suffix, i",
 			Value: &cli.StringSlice{},
-			Usage: "template suffix",
+			Usage: "include template suffix or template name",
 		},
 		cli.StringSliceFlag{
-			Name:  "ignore-suffix, i",
+			Name:  "exclude-template-suffix, x",
 			Value: &cli.StringSlice{},
-			Usage: "ignore suffix",
+			Usage: "exclude template suffix or template name",
 		},
 	}
 	//! app commands

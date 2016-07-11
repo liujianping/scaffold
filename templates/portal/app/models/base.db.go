@@ -33,7 +33,33 @@ func Columns(obj interface{}) []string {
 	t := reflect.TypeOf(obj)
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
-		columns = append(columns, field.Tag.Get("db"))
+		if field.Tag.Get("db") != "" && field.Tag.Get("db") != "-" {
+			columns = append(columns, field.Tag.Get("db"))
+		}
 	}
 	return columns
+}
+
+func TableObject(db *gorm.DB, table string, id int64) interface{} {
+	switch table {
+	[[range .tables]]
+	case "[[.Name]]":
+		var obj [[.Name | class]]
+		if err := db.Find(&obj, id).Error; err != nil {
+			return nil
+		}
+		return obj
+	[[end]]
+	}
+	return nil
+}
+
+func DefaultTableObject(table string) interface{} {
+	switch table {
+	[[range .tables]]
+	case "[[.Name]]":
+		return Default[[.Name | class]]
+	[[end]]
+	}
+	return nil
 }

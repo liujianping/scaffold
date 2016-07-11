@@ -21,8 +21,19 @@
       [[if ne (.Tag "ignore") "y"]]
       <dt>[[.Tag "caption"]]</dt>
       <dd>
-      {{widget "[[.Tag "widget"]]" "r" "[[.Field]]" .[[.Field | camel | lint]] [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+      {{widget "[[.Tag "widget"]]" "r" "detail.[[.Field]]" .[[.Field | camel | lint]] [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
       </dd>
+      [[end]]
+      [[end]]
+
+      [[range .tables]]
+      [[if eq (.Tag "belong") $.table.Name]]
+      <dt>[[.Tag "caption"]]</dt>
+      <dd>
+      [[if ne (.Tag "many") ""]]
+      {{many "[[.Tag "belong"]]" "[[.Tag "many"]]"  "[[.Name]]" "r" .ID .[[.Tag "many" | camel | lint]]}}
+      [[end]]
+      <dd> 
       [[end]]
       [[end]]
     </dl>

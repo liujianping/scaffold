@@ -1,4 +1,5 @@
 [[set . "t_module" (.table.Name | module)]]
+[[set . "t_class" (.table.Name | class)]]
 <!-- 提示信息开始 -->
   {{if .flash.success}}
   <div class="alert alert-success">
@@ -35,22 +36,23 @@
         <th>操作</th>
       </thead>
       <tbody>
-          {{range .items}}
+          {{range $k, $v := .items}}
           <tr>
             [[with .table.PrimaryColumn]]
             <td>{{widget "checkbox"  "w" "[[.Field]][]" .[[.Field | camel | lint]] [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
             </td>
             <td>
-            {{widget "finder"  "r" "[[.Field]]" .[[.Field | camel | lint]] "[[$.table.Name]]"}}
+            <a href='/[[$.table.Name | module]].detail/{{.[[.Field | camel | lint]]}}'>
+            {{.[[.Field | camel | lint]]}}
+            </a>
             </td>
             [[end]]
             [[range .table.Columns]][[if eq (.Tag "column") "y"]]
-            <td>{{widget "[[.Tag "widget"]]" "r" "[[.Field]]"  .[[.Field | camel | lint]] [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}</td>
+            <td>
+            {{widget "[[.Tag "widget"]]" "r" (printf "query.[[.Field]].%d" $k)  $v.[[.Field | camel | lint]] [[if ne (.Tag "relation") ""]] "[[.Tag "relation"]]"[[end]] [[if ne (.Tag "field") ""]] "[[.Tag "field"]]"[[end]]}}
+            </td>
             [[end]][[end]]
             <td>
-              <!-- <a href="/[[.t_module]].detail/{{.ID}}">详情</a>
-              <a href="/[[.t_module]].update/{{.ID}}">修改</a>
-              <a href="/[[.t_module]].remove/{{.ID}}">删除</a> -->
               <div class="btn-group btn-group-xs" role="group">
                 <button type="button" class="btn btn-default" onclick="modify({{.ID}});">
                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>  

@@ -70,6 +70,28 @@ var (
 		return template.HTML(wr.String())
 	}
 
+	Many = func(belong string, many string, relation string, mode string, id int64, value interface{}, options ...interface{}) template.HTML {
+		tmpl, err := revel.MainTemplateLoader.Template(fmt.Sprintf("view.%s/many.html", symbol.ModuleName(many)))
+		if err != nil {
+			return template.HTML(fmt.Sprintf("view.%s/many.html not exist.", symbol.ModuleName(many)))
+		}
+
+		wr := bytes.NewBuffer([]byte(""))
+		if err := tmpl.Render(wr, map[string]interface{}{
+			"belong":   belong,
+			"many":     many,
+			"relation": relation,
+			"mode":     mode,
+			"id":       id,
+			"value":    value,
+			"options":  options,
+		}); err != nil {
+			return template.HTML(err.Error())
+		}
+
+		return template.HTML(wr.String())
+	}
+
 	DomID = func(src string) string {
 		return strings.Replace(src, ".", "_", -1)
 	}
@@ -92,6 +114,10 @@ var (
 
 	SecureEscape = func(src interface{}) string {
 		return template.HTMLEscapeString(template.JSEscapeString(fmt.Sprintf("%v", src)))
+	}
+
+	JavascriptEscape = func(src interface{}) string {
+		return template.JSEscapeString(fmt.Sprintf("%v", src))
 	}
 
 	Pagination = func(widget, name string, total, page_size, page_no int64) template.HTML {
@@ -136,12 +162,16 @@ func init() {
 	TimeLocation, _ = time.LoadLocation("Asia/Shanghai")
 	revel.TypeBinders[reflect.TypeOf(time.Time{})] = TimeLocationBinder
 	revel.TemplateFuncs["widget"] = Widget
+	revel.TemplateFuncs["many"] = Many
 	revel.TemplateFuncs["domid"] = DomID
 	revel.TemplateFuncs["date_format"] = DateFormat
 	revel.TemplateFuncs["datetime_format"] = DatetimeFormat
 	revel.TemplateFuncs["module"] = symbol.ModuleName
 	revel.TemplateFuncs["class"] = symbol.ClassName
+	revel.TemplateFuncs["camel"] = symbol.Camel
+	revel.TemplateFuncs["lint"] = symbol.Lint
 	revel.TemplateFuncs["json"] = JsonEncode
 	revel.TemplateFuncs["pagination"] = Pagination
 	revel.TemplateFuncs["secure_escape"] = SecureEscape
+	revel.TemplateFuncs["javascript_escape"] = JavascriptEscape
 }

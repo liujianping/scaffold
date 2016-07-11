@@ -3,27 +3,28 @@ package controllers
 import (
 	"strings"
 
+	"[[.project]]/app/models"
 	"github.com/revel/revel"
 )
 
 var selections = map[string]interface{}{}
 
-func GetSelection(code string) []models.Option {
+func GetSelection(code string) []models.SystemOption {
 	if items, ok := selections[code]; ok {
-		return items.([]models.Option)
+		return items.([]models.SystemOption)
 	}
 
-	query := models.OptionQuery{Code: code}
-	sort := models.OptionSort{1}
-	page := models.OptionPage{0, 0}
-	_, items, _ := models.DefaultOption.Search(db,
+	query := models.SystemOptionQuery{Code: code}
+	sort := models.SystemOptionSort{2}
+	page := models.SystemOptionPage{0, 0}
+	_, items, _ := models.DefaultSystemOption.Search(db,
 		query, sort, page)
 
 	selections[code] = items
 	return items
 }
 
-func GetOption(code, option_code string) int64 {
+func GetOptionValue(code, option_code string) int64 {
 	opts := GetSelection(code)
 	for _, opt := range opts {
 		if strings.ToLower(opt.OptionCode) == strings.ToLower(option_code) {
@@ -40,11 +41,11 @@ func GetOptionName(code string, option_value int64) string {
 			return opt.OptionName
 		}
 	}
-	return "未知"
+	return "none"
 }
 
 func init() {
 	revel.TemplateFuncs["selection"] = GetSelection
-	revel.TemplateFuncs["option"] = GetOption
+	revel.TemplateFuncs["option"] = GetOptionValue
 	revel.TemplateFuncs["option_name"] = GetOptionName
 }

@@ -1,4 +1,36 @@
-function upload(elem, cb){ 
+function upload_file(elem, cb){ 
+  var formdata = new FormData(); 
+  var fileObj = $(elem).get(0).files; 
+  var url = "/widget.upload"; 
+
+  formdata.append("upload", fileObj[0]);
+
+  jQuery.ajax({ 
+      url : url, 
+      type : 'post', 
+      data : formdata, 
+      cache : false, 
+      contentType : false, 
+      processData : false, 
+      dataType : "json", 
+      success : function(data) { 
+          if (cb) {
+            cb(data)
+          } else {
+            var holder = $(elem).parent()
+            if (data.code == 0) {
+              holder.find(":hidden").val(data.data.url)
+              holder.append($('<a></a>').attr("href", data.data.url).text(data.data.url))
+            } else {
+              holder.find("p").remove()
+              holder.append($('<p></p>').attr("class", "text-warning").text(data.message))
+            }  
+          }
+      } 
+  });
+}
+
+function upload_image(elem, cb){ 
   var formdata = new FormData(); 
   var fileObj = $(elem).get(0).files; 
   var url = "/widget.upload"; 

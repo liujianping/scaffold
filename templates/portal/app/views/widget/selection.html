@@ -4,18 +4,38 @@
     {{end}}
 {{end}}
 {{if eq .mode "w"}}
-<select name="{{.name}}" class="form-control" value="{{.value}}">
-    <option value="0">所有</option>
+<select id="{{.name | domid}}"  name="{{.name}}" class="form-control">
+    <option value="0" data-value="">请选择</option>
     {{range ((index .options 0) | selection)}}
         {{if $.value}}
         {{if eq .OptionValue $.value}}
-        <option value="{{.OptionValue}}" selected>{{raw .OptionName}}</option>
+        <option value="{{.OptionValue}}" data-value="{{.OptionCode}}" selected>{{raw .OptionName}}</option>
         {{else}}
-        <option value="{{.OptionValue}}">{{raw .OptionName}}</option>  
+        <option value="{{.OptionValue}}" data-value="{{.OptionCode}}">{{raw .OptionName}}</option>  
         {{end}}
         {{else}}
-        <option value="{{.OptionValue}}">{{raw .OptionName}}</option>  
+        <option value="{{.OptionValue}}" data-value="{{.OptionCode}}" >{{raw .OptionName}}</option>  
         {{end}}
     {{end}}
 </select>
+{{if ge (len .options) 2}}
+<script type="text/javascript">
+$('#{{index .options 1 | domid}}').on('change', function(){
+    code = "{{index .options 0}}"
+    relate_code = $('#{{index .options 1 | domid}}').find("option:selected").data('value')
+    data = {
+        "code": code,
+        "relate_code": relate_code,
+    }
+    $.post("/widget.system.option", data, function(json){
+        opts = json.data.options
+        $('#{{.name | domid}}').find("option").remove()
+        $('#{{.name | domid}}').append($('<option></option>').attr("value", "0").text("请选择"))
+        for (i = 0; i < opts.length; i++) {
+            $('#{{.name | domid}}').append($('<option></option>').attr("value", opts[i].option_value).text(opts[i].option_name))        
+        }      
+    })
+})
+</script>
+{{end}}
 {{end}}

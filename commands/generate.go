@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"go/build"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -41,48 +40,11 @@ func dest_project_dir(project string) (string, error) {
 
 func hasSuffix(fpath string, suffixes []string) bool {
 	for _, suffix := range suffixes {
-		if strings.HasSuffix(fpath, "."+strings.TrimPrefix(suffix, ".")) {
+		if strings.HasSuffix(fpath, suffix) {
 			return true
 		}
 	}
 	return false
-}
-
-type Option struct {
-	Name        string
-	Code        string
-	OptionName  string
-	OptionCode  string
-	OptionValue int64
-}
-
-func system_options(db *sql.DB) (map[string][]Option, error) {
-	options := make(map[string][]Option)
-
-	rows, err := db.Query(`SELECT name, code, option_code, option_value , option_name FROM options`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var opt Option
-		if err := rows.Scan(&opt.Name, &opt.Code, &opt.OptionCode, &opt.OptionValue, &opt.OptionName); err != nil {
-			log.Println("scan failed:", err)
-			return nil, err
-		}
-
-		if sel, ok := options[opt.Code]; ok {
-			sel = append(sel, opt)
-			options[opt.Code] = sel
-		} else {
-			sel = []Option{}
-			sel = append(sel, opt)
-			options[opt.Code] = sel
-		}
-	}
-
-	return options, nil
 }
 
 func Generate(ctx *cli.Context) {
@@ -109,8 +71,8 @@ func Generate(ctx *cli.Context) {
 		return
 	}
 
-	suffixes := ctx.GlobalStringSlice("template-suffix")
-	ignores := ctx.GlobalStringSlice("ignore-suffix")
+	suffixes := ctx.GlobalStringSlice("include-template-suffix")
+	ignores := ctx.GlobalStringSlice("exclude-template-suffix")
 	force := ctx.GlobalBool("force")
 	driver := ctx.String("driver")
 	database := ctx.String("database")
@@ -132,17 +94,11 @@ func Generate(ctx *cli.Context) {
 		fmt.Println("scaffold generate failed:", err)
 		return
 	}
-	options, err := system_options(db)
-	if err != nil {
-		fmt.Println("scaffold generate failed:", err)
-		return
-	}
 
 	if err := filepath.Walk(template_dir, func(srcPath string, info os.FileInfo, err error) error {
 		data := map[string]interface{}{
 			"project": project,
 			"tables":  tables,
-			"options": options,
 		}
 		for i, table := range tables {
 			data["table"] = table
