@@ -42,35 +42,37 @@ scaffold 模板支持所有 golang 中 text/template 包提供的模版功能。
 -   模板函数:
 
     - 驼峰函数(camel) 
-
-    users => Users
-
+````go
+    转化例子: users => Users
+````
     - 复数函数(plural)
-
+````go
     user => users
-
+````
     - 单数函数(singular)
-
+````go
     users => user
-
+````
     - 函数(lint)
 
     - 函数(quote)
-
+````go
     users => "users"
-
+````
     - 函数(convert)
 
     主要用于数据库字段类型的转化
-
+````go
+    covert("mysql", "tinyint", "") => int64
+````
     - 函数(module)
-
+````go
     user_accounts => user.account
-
+````
     - 函数(class)
-
+````go
     user_accounts => UserAccount
-
+````
     - 加函数(add)
     - 减函数(sub)
     - 乘函数(multiply)
@@ -81,14 +83,19 @@ scaffold 模板支持所有 golang 中 text/template 包提供的模版功能。
     - 表对象接口
 
     ````
-    table.Name()
-    table.Columns()
-
+    table.Name() => 返回表格名
+    table.Columns() => 返回表格所有列表对象
+    table.Column(name string) => 返回表格指定列表对象
+    table.Comment() => 返回表格注释
+    table.Tag(tag string) => 返回表格注释中指定tag
     ````
 
-    - 字段对象接口
+    - 列表对象接口
     ````
-
+    column.Name() => 返回列表名
+    column.Type() => 返回列表类型
+    column.Comment() => 返回列表注释
+    column.Tag(tag string) => 返回表格注释中指定tag
     ````
 
 ````go
