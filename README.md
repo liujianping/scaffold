@@ -33,14 +33,14 @@ CREATE TABLE `users` (
 
 ### 快速开始
 
-* 安装
+##### 安装
 
 ````shell
 $: go get github.com/liujianping/scaffold
 
 ````
 
-* 生成model代码
+##### 生成model代码
 
 [表定义详解](/doc/model.md)
 
@@ -49,7 +49,7 @@ $: scaffold -i=.go -t=model generate -d="database" -u="root" -p="pass" github.co
 
 ````
 
-* 生成管理平台
+##### 生成管理平台
 
 [表定义例子](/doc/portal.sql)
 
@@ -65,7 +65,7 @@ $: scaffold -i=.go -i=.html -i=routes -t=portal generate -d="database" -u="root"
 $: revel run github.com/yourname/portal
 ````
 
-* 自定义模板
+##### 自定义模板
 
 [模版定义详解](/doc/template.md)
 
