@@ -58,6 +58,8 @@ $: scaffold -i=.go -t=model generate -d="database" -u="root" -p="pass" github.co
 # 生成项目
 $: scaffold -i=.go -i=.html -i=routes -t=portal generate -d="database" -u="root" -p="pass" github.com/yourname/portal
 
+# 修改数据库配置 github.com/yourname/portal/conf/app.conf
+
 # 运行项目
 $: revel run github.com/yourname/portal
 ````
