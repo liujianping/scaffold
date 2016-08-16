@@ -1,6 +1,10 @@
+{{set . "flag" false}}
 {{if eq .mode "r"}}
     {{range ((index .options 0) | selection)}}
-        {{if eq .OptionValue $.value}}{{raw .OptionName}}{{end}}
+        {{if eq $.flag false}}
+            {{if eq .OptionValue $.value}}{{raw .OptionName}}{{end}}
+            {{set $ "flag" true}}
+        {{end}}
     {{end}}
 {{end}}
 {{if eq .mode "w"}}
