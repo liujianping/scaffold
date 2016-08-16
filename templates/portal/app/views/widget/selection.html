@@ -32,7 +32,7 @@ $('#{{index .options 1 | domid}}').on('change', function(){
         $('#{{.name | domid}}').find("option").remove()
         $('#{{.name | domid}}').append($('<option></option>').attr("value", "0").text("请选择"))
         for (i = 0; i < opts.length; i++) {
-            $('#{{.name | domid}}').append($('<option></option>').attr("value", opts[i].option_value).text(opts[i].option_name))        
+            $('#{{.name | domid}}').append($('<option></option>').attr("value", opts[i].option_value).attr("data-value", opts[i].option_code).text(opts[i].option_name))        
         }      
     })
 })
